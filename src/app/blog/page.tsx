@@ -2,46 +2,29 @@ import React from "react";
 import { PostCard } from "@/components/PostCard";
 import { Sidebar } from "@/components/Sidebar";
 import { Search, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
+import { client } from "@/lib/sanity.client";
 
-export default function BlogArchive() {
-  const posts = [
-    {
-      id: 1,
-      title: "The Rapid Evolution of Generative AI in Creative Industries",
-      excerpt: "How artists and designers are leveraging next-generation machine learning models to push the boundaries of digital creativity.",
-      author: "Julius Caesar",
-      date: "Oct 24, 2023",
-      category: "Technology",
-      views: "14k",
+async function getPosts() {
+  const query = `*[_type == "post"] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    excerpt,
+    publishedAt,
+    mainImage,
+    author->{
+      name,
+      image
     },
-    {
-      id: 2,
-      title: "Finding Balance: The Zen Guide to Remote Professionalism",
-      excerpt: "Discover the essential habits that separate highly productive remote workers from the rest of the pack in 2024.",
-      author: "Marcus Aurelius",
-      date: "Oct 22, 2023",
-      category: "Lifestyle",
-      views: "8.2k",
-    },
-    {
-       id: 5,
-       title: "Why Minimalist Web Design is Still Relevant in 2024",
-       excerpt: "UX trends come and go, but clarity and speed remain the king of user experience. Here is why less is still more.",
-       author: "Dieter Rams",
-       date: "Oct 20, 2023",
-       category: "Design",
-       views: "9.1k",
-    },
-    {
-       id: 6,
-       title: "The Future of Finance: Understanding DeFi 2.0",
-       excerpt: "A deep dive into the next phase of decentralized finance and what it means for traditional banking systems.",
-       author: "Satoshi",
-       date: "Oct 19, 2023",
-       category: "Business",
-       views: "12k",
+    categories[]->{
+      title
     }
-  ];
+  }`;
+  return await client.fetch(query);
+}
+
+export default async function BlogArchive() {
+  const posts = await getPosts();
 
   return (
     <div className="bg-background min-h-screen pt-12 pb-24">
@@ -52,7 +35,7 @@ export default function BlogArchive() {
               All <span className="text-primary italic">Articles</span>
             </h1>
             <p className="text-sm font-medium text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-               Browsing through <span className="text-foreground font-black underline decoration-primary decoration-2 underline-offset-4">428</span> insightful articles
+               Browsing through <span className="text-foreground font-black underline decoration-primary decoration-2 underline-offset-4">{posts.length}</span> insightful articles
             </p>
         </div>
 
@@ -79,10 +62,16 @@ export default function BlogArchive() {
           {/* Main Grid Feed */}
           <div className="lg:w-2/3">
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {posts.map((post) => (
-                   <PostCard key={post.id} post={post} />
+                {posts.map((post: any) => (
+                   <PostCard key={post._id} post={post} />
                 ))}
              </div>
+
+             {posts.length === 0 && (
+               <div className="py-24 text-center">
+                  <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">No intelligence dispatches found in this sector.</p>
+               </div>
+             )}
 
              {/* Modern Pagination */}
              <div className="mt-20 pt-12 border-t border-border flex items-center justify-between">
@@ -102,7 +91,7 @@ export default function BlogArchive() {
              </div>
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar Area */}
           <div className="lg:w-1/3">
              <div className="sticky top-32">
                 <Sidebar />

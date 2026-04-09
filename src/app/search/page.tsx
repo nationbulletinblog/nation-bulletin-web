@@ -1,80 +1,35 @@
-'use client'
-
-import React, { Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import React from 'react'
 import { PostCard } from '@/components/PostCard'
 import { Sidebar } from '@/components/Sidebar'
 import { Search as SearchIcon } from 'lucide-react'
+import { client } from '@/lib/sanity.client'
 
-function SearchResults() {
-  const searchParams = useSearchParams()
-  const query = searchParams.get('q')
-
-  // Mock data (standardized across pages)
-  const allPosts = [
-    {
-      id: 1,
-      title: "The Rapid Evolution of Generative AI in Creative Industries",
-      excerpt: "How artists and designers are leveraging next-generation machine learning models to push the boundaries of digital creativity.",
-      author: "Julius Caesar",
-      date: "Oct 24, 2023",
-      category: "Technology",
-      views: "14k",
+async function getSearchResults(query: string) {
+  const sanityQuery = `*[_type == "post" && (title match $searchQuery || excerpt match $searchQuery || categories[]->title match $searchQuery)] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    excerpt,
+    publishedAt,
+    mainImage,
+    author->{
+      name,
+      image
     },
-    {
-      id: 2,
-      title: "Finding Balance: The Zen Guide to Remote Professionalism",
-      excerpt: "Discover the essential habits that separate highly productive remote workers from the rest of the pack in 2024.",
-      author: "Marcus Aurelius",
-      date: "Oct 22, 2023",
-      category: "Lifestyle",
-      views: "8.2k",
-    },
-    {
-      id: 3,
-      title: "Market Shift: Why Venture Capital is Moving Towards Green Tech",
-      excerpt: "An in-depth look at the investment trends shaping the next decade of sustainable innovation and renewable energy.",
-      author: "Seneca",
-      date: "Oct 20, 2023",
-      category: "Business",
-      views: "11k",
-    },
-    {
-       id: 4,
-       title: "The Silent Revolution: How Micro-Investing is Changing Wealth",
-       excerpt: "Exploring the rise of fractional shares and automated portfolios in the modern retail investment landscape.",
-       author: "Cicero",
-       date: "Oct 18, 2023",
-       category: "Economy",
-       views: "5.6k",
-    },
-    {
-       id: 5,
-       title: "Urban Renaissance: Why Cities are Returning to Traditional Art",
-       excerpt: "Tracing the resurgence of mural culture and community-driven street art in global metropolitan centers.",
-       author: "Ovid",
-       date: "Oct 16, 2023",
-       category: "Culture",
-       views: "9.1k",
-    },
-    {
-       id: 6,
-       title: "Deep Sea Exploration: The Final Frontier of Climate Science",
-       excerpt: "New discoveries in the abyss are providing critical data for our understanding of global ocean currents.",
-       author: "Pliny",
-       date: "Oct 14, 2023",
-       category: "Science",
-       views: "12k",
+    categories[]->{
+      title
     }
-  ]
+  }`;
+  return await client.fetch(sanityQuery, { searchQuery: `*${query}*` });
+}
 
-  const filteredPosts = query 
-    ? allPosts.filter(post => 
-        post.title.toLowerCase().includes(query.toLowerCase()) || 
-        post.excerpt.toLowerCase().includes(query.toLowerCase()) ||
-        post.category.toLowerCase().includes(query.toLowerCase())
-      )
-    : []
+export default async function SearchPage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ q?: string }> 
+}) {
+  const { q: query = '' } = await searchParams;
+  const filteredPosts = query ? await getSearchResults(query) : [];
 
   return (
     <div className="bg-background min-h-screen pt-12 pb-24">
@@ -98,14 +53,18 @@ function SearchResults() {
           <div className="lg:w-3/4">
              {filteredPosts.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                   {filteredPosts.map((post) => (
-                      <PostCard key={post.id} post={post} />
+                   {filteredPosts.map((post: any) => (
+                      <PostCard key={post._id} post={post} />
                    ))}
                 </div>
              ) : (
                 <div className="py-24 text-center bg-muted border border-border">
                    <p className="text-2xl font-black uppercase tracking-tighter text-zinc-300">No matches found for your query.</p>
-                   <p className="mt-4 text-[10px] font-black uppercase tracking-widest text-zinc-400">Try searching for keywords like 'Technology', 'AI', or 'Market'.</p>
+                   {query ? (
+                     <p className="mt-4 text-[10px] font-black uppercase tracking-widest text-zinc-400">Try searching for different keywords or sectors.</p>
+                   ) : (
+                     <p className="mt-4 text-[10px] font-black uppercase tracking-widest text-zinc-400">Please enter a search term in the field above.</p>
+                   )}
                 </div>
              )}
 
@@ -123,13 +82,5 @@ function SearchResults() {
         </div>
       </div>
     </div>
-  )
-}
-
-export default function SearchPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-      <SearchResults />
-    </Suspense>
   )
 }
