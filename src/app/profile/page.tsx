@@ -1,0 +1,118 @@
+'use client'
+
+import React from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { User, Mail, Shield, FileText, Settings, ExternalLink, ArrowRight, TrendingUp } from 'lucide-react'
+import Link from 'next/link'
+
+export default function ProfilePage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-t-2 border-primary animate-spin"></div>
+      </div>
+    )
+  }
+
+  if (status === 'unauthenticated') {
+    router.push('/login')
+    return null
+  }
+
+  return (
+    <div className="bg-background min-h-screen pb-24">
+      {/* Editorial Header */}
+      <header className="pt-20 pb-16 masthead-line mb-16">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-12">
+           <div className="flex items-center gap-10">
+              <div className="w-24 h-24 bg-muted flex items-center justify-center border border-border">
+                 <User className="w-10 h-10 text-zinc-300" />
+              </div>
+              <div className="text-left">
+                 <div className="flex items-center gap-3 mb-2">
+                    <span className="text-meta text-primary">Verified Member</span>
+                    <Shield className="w-3 h-3 text-primary" />
+                 </div>
+                 <h1 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter leading-none">
+                    {session?.user?.name || 'Verified Member'}
+                 </h1>
+                 <p className="mt-4 text-xs font-black uppercase tracking-[0.2em] text-zinc-400">{session?.user?.email}</p>
+              </div>
+           </div>
+           
+           <div className="flex items-center gap-4">
+              <button className="px-8 py-4 border-2 border-foreground text-foreground text-[10px] font-black uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors">
+                Edit Profile
+              </button>
+           </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-1 px-1 bg-border border border-border">
+           {/* Recent Activity */}
+           <div className="lg:col-span-8 bg-background p-10 md:p-14">
+              <div className="flex items-center justify-between mb-12 border-b border-border pb-6">
+                 <h2 className="text-3xl font-black uppercase tracking-tighter">My Articles</h2>
+                 <Link href="/blog" className="text-meta text-zinc-400 hover:text-primary transition-colors flex items-center gap-2">
+                    View Entire Archive <ArrowRight className="w-4 h-4" />
+                 </Link>
+              </div>
+
+              <div className="space-y-12">
+                 {[1, 2, 3].map((i) => (
+                   <div key={i} className="group flex flex-col md:flex-row gap-8 items-start">
+                      <div className="w-full md:w-48 aspect-video bg-muted flex-shrink-0" />
+                      <div>
+                         <div className="flex items-center space-x-3 text-meta text-primary mb-2">
+                            <span>Technology</span>
+                            <span className="text-zinc-300">Nov {10 + i}, 2023</span>
+                         </div>
+                         <h3 className="text-xl font-black uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
+                            Policy Shift: The New Ethics of Autonomous Systems
+                         </h3>
+                         <div className="mt-6 flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                            <span className="flex items-center gap-1.5"><TrendingUp className="w-3 h-3 text-primary" /> 1.4k Views</span>
+                            <span className="text-primary italic">Status: Published</span>
+                         </div>
+                      </div>
+                   </div>
+                 ))}
+              </div>
+           </div>
+
+           {/* Performance Sidebar */}
+           <div className="lg:col-span-4 bg-background p-10 md:p-14 border-l border-border flex flex-col gap-16">
+              <section>
+                 <h3 className="text-meta text-primary mb-8 border-b border-border pb-4 w-full block">Personal Stats</h3>
+                 <div className="grid grid-cols-2 gap-px bg-border border border-border">
+                    <div className="bg-background p-6">
+                       <p className="text-2xl font-black italic tracking-tighter uppercase mb-1">12</p>
+                       <p className="text-[10px] font-black text-zinc-400 tracking-widest uppercase">Articles</p>
+                    </div>
+                    <div className="bg-background p-6">
+                       <p className="text-2xl font-black italic tracking-tighter uppercase mb-1">42k</p>
+                       <p className="text-[10px] font-black text-zinc-400 tracking-widest uppercase">Reach</p>
+                    </div>
+                 </div>
+              </section>
+
+              <section className="bg-secondary p-10 text-white">
+                 <h3 className="text-meta text-primary mb-4">Writer Console</h3>
+                 <p className="text-sm font-medium text-zinc-400 leading-relaxed mb-8">Ready to submit a new investigative report to the international edition?</p>
+                 <Link href="/write-for-us" className="flex items-center justify-between w-full border-t border-zinc-700 pt-6 group">
+                   <span className="text-xs font-black uppercase tracking-[0.2em] group-hover:text-primary transition-colors">Write Article</span>
+                   <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-2 transition-transform" />
+                 </Link>
+              </section>
+           </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+

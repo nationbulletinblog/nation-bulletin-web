@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+:root {
+  /* Premium Palette */
+  --background: #ffffff;
+  --foreground: #111111;
+  --primary: #910a0a; /* Deep Editorial Crimson */
+  --primary-foreground: #ffffff;
+  --secondary: #1a1a1a; /* Pitch Black */
+  --secondary-foreground: #ffffff;
+  --muted: #f8f8f8;
+  --muted-foreground: #666666;
+  --accent: #facc15;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --border: #eeeeee;
+  --radius: 0rem; /* Sharp edges for high-end look */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --radius-xl: var(--radius);
+  
+  /* Fonts */
+  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-outfit);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Redesigning Typography Hierarchy - Switching to Modern Sans */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+p {
+  font-family: var(--font-sans), sans-serif;
+  line-height: 1.7;
+  font-weight: 400;
+  color: #444444;
+}
+
+.text-meta {
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.6rem;
+  color: var(--primary);
+}
+
+/* Premium Layout Helpers */
+.masthead-line {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.thin-border {
+  border: 1px solid var(--border);
+}
+
+.bento-card {
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  background: white;
+  border: 1px solid var(--border);
+}
+
+.bento-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 30px 60px -12px rgba(50, 50, 93, 0.1), 0 18px 36px -18px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+/* Animations */
+.fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Custom Scrollbar for Widgets */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 0;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary);
+}
