@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@portabletext/react": "^6.0.3",
     "@sanity/client": "^7.20.0",
+    "@sanity/image-url": "^2.1.1",
     "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.1",
     "lucide-react": "^1.8.0",
     "luxon": "^3.7.2",
     "next": "16.2.3",

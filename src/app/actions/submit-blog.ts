@@ -3,12 +3,26 @@ import { writeClient } from '@/lib/sanity.client'
 import { blogSubmissionSchema, BlogSubmission } from '@/lib/validation'
 import { revalidatePath } from 'next/cache'
 
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+
 export async function submitBlogPost(data: BlogSubmission) {
   try {
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return { success: false, message: 'Unauthorized. Please login to submit.' }
+    }
+
     // 1. Validate the data server-side
     const validatedData = blogSubmissionSchema.parse(data)
 
-    // 2. Create the post in Sanity as a draft
+    // 2. Fetch the author ID from Sanity to ensure it's linked properly
+    const author = await writeClient.fetch(
+      `*[_type == "author" && email == $email][0]`,
+      { email: session.user?.email }
+    )
+
+    // 3. Create the post in Sanity as a draft
     const newPost = {
       _type: 'post',
       title: validatedData.title,
@@ -21,16 +35,19 @@ export async function submitBlogPost(data: BlogSubmission) {
       },
       body: [
         {
+          _key: `block-${crypto.randomUUID()}`,
           _type: 'block',
           children: [
             {
+              _key: `span-${crypto.randomUUID()}`,
               _type: 'span',
               text: validatedData.content,
             },
           ],
         },
       ],
-      // We can also store the contributor's info in metadata or custom fields
+      // Link to the actual author document
+      author: author ? { _type: 'reference', _ref: author._id } : undefined,
       authorInfo: {
         name: validatedData.authorName,
         email: validatedData.authorEmail,

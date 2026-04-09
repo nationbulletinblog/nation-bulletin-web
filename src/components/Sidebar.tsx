@@ -1,62 +1,44 @@
-'use client'
-
-import React, { useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { TrendingUp, Globe, Send, Share2, Search, ArrowRight, Bookmark, ChevronDown, ChevronUp } from 'lucide-react'
+import { Globe, Send, Share2 } from 'lucide-react'
+import { client } from '@/lib/sanity.client'
+import { SidebarSearch } from './SidebarSearch'
 
-export const Sidebar = () => {
-  const router = useRouter()
-  const [searchQuery, setSearchQuery] = useState('')
+async function getSidebarData() {
+  const categoriesQuery = `*[_type == "category"] {
+    title,
+    "slug": slug.current,
+    "count": count(*[_type == "post" && references(^._id)])
+  }`;
+  
+  const tagsQuery = `*[_type == "tag"][0...15] {
+    title,
+    "slug": slug.current
+  }`;
 
-  const categories = [
-    { name: 'Technology', count: 42 },
-    { name: 'Lifestyle', count: 18 },
-    { name: 'Business', count: 24 },
-    { name: 'Politics', count: 31 },
-    { name: 'Culture', count: 12 },
-    { name: 'Strategy', count: 22 },
-    { name: 'Marketing', count: 15 },
-    { name: 'Economy', count: 28 },
-    { name: 'Science', count: 10 },
-    { name: 'Education', count: 14 },
-    { name: 'Health', count: 20 },
-    { name: 'Sports', count: 8 },
-    { name: 'Entertainment', count: 19 },
-    { name: 'Fashion', count: 11 },
-  ]
+  const popularPostsQuery = `*[_type == "post"] | order(publishedAt desc)[0...3] {
+    _id,
+    title,
+    "slug": slug.current,
+    categories[0]->{ title, "slug": slug.current }
+  }`;
 
-  const popularPosts = [
-    { id: 1, title: 'The Impact of Quantum Computing on Financial Security', category: 'Tech' },
-    { id: 2, title: 'Reimagining Urban Spaces: The Rise of Vertical Forests', category: 'Culture' },
-    { id: 3, title: 'The Silent Revolution of Renewable Energy Investment', category: 'Business' },
-  ]
+  const [categories, tags, popularPosts] = await Promise.all([
+    client.fetch(categoriesQuery),
+    client.fetch(tagsQuery),
+    client.fetch(popularPostsQuery)
+  ]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
-    }
-  }
+  return { categories, tags, popularPosts };
+}
+
+export const Sidebar = async () => {
+  const { categories, tags, popularPosts } = await getSidebarData();
 
   return (
     <aside className="space-y-12">
       {/* Search Widget */}
-      <section className="bg-muted p-8">
-        <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-6 border-b border-zinc-200 pb-4">Search Articles</h3>
-        <form onSubmit={handleSearch} className="relative">
-          <input 
-            type="text" 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Type and hit enter..." 
-            className="w-full bg-white border border-border py-4 px-4 text-xs font-medium focus:border-primary outline-none transition-all placeholder:text-zinc-300"
-          />
-          <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2">
-            <Search className="w-4 h-4 text-zinc-300 hover:text-primary transition-colors" />
-          </button>
-        </form>
-      </section>
+      <SidebarSearch />
 
       {/* Stay Connected */}
       <section>
@@ -76,7 +58,7 @@ export const Sidebar = () => {
            </button>
            <button className="flex items-center justify-center gap-3 py-4 bg-[#BD081C] text-white hover:opacity-90 transition-opacity font-bold">
               <Share2 className="w-4 h-4" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Viral</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">Insight</span>
            </button>
         </div>
       </section>
@@ -85,14 +67,16 @@ export const Sidebar = () => {
       <section>
         <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-8 border-b border-border pb-4">Popular Posts</h3>
         <div className="space-y-6">
-          {popularPosts.map((post, i) => (
-            <div key={post.id} className="group flex gap-4 items-start">
+          {popularPosts.map((post: any, i: number) => (
+            <div key={post._id} className="group flex gap-4 items-start">
                <div className="text-4xl font-black italic tracking-tighter text-zinc-100 group-hover:text-primary/10 transition-colors leading-none">
                   {i + 1}
                </div>
                <div>
-                  <Link href="/blog" className="text-[10px] font-black uppercase tracking-widest text-primary mb-1 block">{post.category}</Link>
-                  <Link href={`/blog/${post.id}`} className="text-sm font-black uppercase tracking-tight leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                  <Link href={`/category/${post.categories?.[0]?.slug || 'general'}`} className="text-[10px] font-black uppercase tracking-widest text-primary mb-1 block">
+                    {post.categories?.[0]?.title}
+                  </Link>
+                  <Link href={`/blog/${post.slug}`} className="text-sm font-black uppercase tracking-tight leading-tight group-hover:text-primary transition-colors line-clamp-2">
                     {post.title}
                   </Link>
                </div>
@@ -119,18 +103,18 @@ export const Sidebar = () => {
         </div>
       </section>
 
-      {/* Scrollable Categories with Visible Scrollbar */}
+      {/* Scrollable Categories */}
       <section>
         <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-8 border-b border-border pb-4">Categories</h3>
-        <div className="max-h-[350px] overflow-y-scroll pr-2 custom-scrollbar border border-border">
+        <div className="max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border border-border">
            <div className="flex flex-col gap-px bg-border">
-              {categories.map((cat) => (
+              {categories.map((cat: any) => (
                 <Link 
-                  key={cat.name} 
-                  href={`/category/${cat.name.toLowerCase()}`}
+                  key={cat.slug} 
+                  href={`/category/${cat.slug}`}
                   className="flex items-center justify-between p-4 bg-white hover:bg-zinc-50 group transition-colors"
                 >
-                  <span className="text-[11px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-primary transition-colors">{cat.name}</span>
+                  <span className="text-[11px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-primary transition-colors">{cat.title}</span>
                   <span className="px-2 py-1 bg-muted text-[10px] font-black text-zinc-400 group-hover:bg-primary group-hover:text-white transition-all">{cat.count}</span>
                 </Link>
               ))}
@@ -142,13 +126,13 @@ export const Sidebar = () => {
       <section>
         <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-8 border-b border-border pb-4">Popular Tags</h3>
         <div className="flex flex-wrap gap-2">
-           {['#Strategy', '#Technology', '#Finance', '#Marketing', '#Startups', '#Web3', '#Ethics', '#Sustainability'].map((tag) => (
+           {tags.map((tag: any) => (
              <Link 
-               key={tag} 
-               href={`/tag/${tag.replace('#', '').toLowerCase()}`}
+               key={tag.slug} 
+               href={`/tag/${tag.slug}`}
                className="px-3 py-1.5 bg-muted text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:bg-primary hover:text-white transition-all border border-transparent hover:border-primary/20"
              >
-               {tag}
+               #{tag.title}
              </Link>
            ))}
         </div>

@@ -36,7 +36,9 @@ const TAG_OPTIONS = [
   { value: 'CultureShock', label: '#CULTURESHOCK' },
 ]
 
-export const SubmissionForm = () => {
+import { Session } from 'next-auth'
+
+export const SubmissionForm = ({ session }: { session: Session }) => {
   const [status, setStatus] = useState<{ type: 'idle' | 'loading' | 'success' | 'error'; message: string }>({
     type: 'idle',
     message: '',
@@ -55,7 +57,9 @@ export const SubmissionForm = () => {
     defaultValues: {
       content: '',
       category: 'Technology',
-      tags: []
+      tags: [],
+      authorName: session.user?.name || '',
+      authorEmail: session.user?.email || '',
     }
   })
 

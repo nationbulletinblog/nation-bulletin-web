@@ -66,16 +66,19 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
+       {/* Bottom Bar */}
         <div className="pt-12 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0 text-[9px] font-black uppercase tracking-[0.3em] text-zinc-600">
            <div className="flex items-center space-x-8">
               <span>© {new Date().getFullYear()} NATION BULLETIN DIGITAL</span>
-              <span className="flex items-center gap-2"><Globe className="w-3 h-3 text-primary" /> International Edition</span>
+              <span className="flex items-center gap-2 px-3 py-1 bg-zinc-800 rounded-full text-zinc-400">
+                <Globe className="w-3 h-3 text-primary animate-pulse" /> 
+                International Edition
+              </span>
            </div>
            <div className="flex items-center space-x-8">
-              <Link href="#" className="hover:text-primary transition-colors">RSS FEED</Link>
-              <Link href="#" className="hover:text-primary transition-colors">SITEMAP</Link>
-              <Link href="#" className="hover:text-primary transition-colors">WORK WITH US</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
+              <Link href="/write-for-us" className="hover:text-primary transition-colors">Become a Contributor</Link>
            </div>
         </div>
       </div>

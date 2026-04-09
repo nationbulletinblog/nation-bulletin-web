@@ -1,8 +1,13 @@
 import { SubmissionForm } from "@/components/SubmissionForm";
 import React from "react";
-import { PenTool, Globe, Zap } from "lucide-react";
+import { PenTool, Zap, Lock } from "lucide-react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import Link from "next/link";
 
-export default function WriteForUsPage() {
+export default async function WriteForUsPage() {
+  const session = await getServerSession(authOptions);
+
   return (
     <div className="bg-background min-h-screen pb-24">
       {/* Editorial Header */}
@@ -27,7 +32,27 @@ export default function WriteForUsPage() {
         <div className="flex flex-col lg:flex-row gap-20">
            {/* Form Section */}
            <div className="lg:w-2/3">
-              <SubmissionForm />
+              {session ? (
+                <SubmissionForm session={session} />
+              ) : (
+                <div className="bg-white border-2 border-primary p-20 text-center space-y-8 shadow-[20px_20px_0px_0px_rgba(145,10,10,0.1)]">
+                   <div className="inline-flex items-center justify-center w-20 h-20 bg-muted rounded-full mb-4">
+                      <Lock className="w-10 h-10 text-primary" />
+                   </div>
+                   <h2 className="text-3xl font-black uppercase tracking-tighter italic">Intelligence Access Required</h2>
+                   <p className="text-xs font-black uppercase tracking-widest text-zinc-400 max-w-sm mx-auto leading-relaxed">
+                      To maintain our editorial integrity and security protocols, you must identify yourself before submitting a dispatch.
+                   </p>
+                   <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
+                      <Link href="/login" className="px-10 py-5 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] hover:bg-zinc-900 transition-all">
+                         Login
+                      </Link>
+                      <Link href="/register" className="px-10 py-5 border-2 border-primary text-primary text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all">
+                         Register
+                      </Link>
+                   </div>
+                </div>
+              )}
            </div>
 
            {/* Guidelines Sidebar */}

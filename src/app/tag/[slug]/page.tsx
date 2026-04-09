@@ -2,30 +2,30 @@ import React from 'react'
 import { PostCard } from '@/components/PostCard'
 import { Sidebar } from '@/components/Sidebar'
 import { Hash } from 'lucide-react'
+import { client } from '@/lib/sanity.client'
+
+async function getTagPosts(slug: string) {
+  const query = `*[_type == "post" && references(*[_type == "tag" && slug.current == $slug]._id)] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    excerpt,
+    publishedAt,
+    mainImage,
+    author->{
+      name,
+      image
+    },
+    categories[]->{
+      title
+    }
+  }`;
+  return await client.fetch(query, { slug });
+}
 
 export default async function TagPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  // Placeholder data
-  const posts = [
-    {
-      id: 2,
-      title: "Finding Balance: The Zen Guide to Remote Professionalism",
-      excerpt: "Discover the essential habits that separate highly productive remote workers from the rest of the pack in 2024.",
-      author: "Marcus Aurelius",
-      date: "Oct 22, 2023",
-      category: "LIFESTYLE",
-      views: "8.2k",
-    },
-    {
-       id: 5,
-       title: "Why Minimalist Web Design is Still Relevant in 2024",
-       excerpt: "UX trends come and go, but clarity and speed remain the king of user experience. Here is why less is still more.",
-       author: "Dieter Rams",
-       date: "Oct 20, 2023",
-       category: "DESIGN",
-       views: "9.1k",
-    }
-  ]
+  const posts = await getTagPosts(slug);
 
   return (
     <div className="bg-background min-h-screen pt-12 pb-24">
@@ -48,10 +48,16 @@ export default async function TagPage({ params }: { params: Promise<{ slug: stri
           {/* Main Feed */}
           <div className="lg:w-2/3">
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {posts.map((post) => (
-                   <PostCard key={post.id} post={post} />
+                {posts.map((post: any) => (
+                   <PostCard key={post._id} post={post} />
                 ))}
              </div>
+
+             {posts.length === 0 && (
+               <div className="py-24 text-center">
+                  <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">No intelligence dispatches found for this tag.</p>
+               </div>
+             )}
 
              <div className="mt-20 pt-12 border-t border-border text-center">
                 <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">End of Feed</span>
@@ -61,6 +67,7 @@ export default async function TagPage({ params }: { params: Promise<{ slug: stri
           {/* Sidebar */}
           <div className="lg:w-1/3">
              <div className="sticky top-32">
+                {/* @ts-expect-error Server Component */}
                 <Sidebar />
              </div>
           </div>

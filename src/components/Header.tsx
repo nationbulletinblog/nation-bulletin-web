@@ -32,7 +32,6 @@ export const Header = () => {
   }
 
   const navLinks = [
-    { name: 'Latest', href: '/blog' },
     { name: 'Politics', href: '/category/politics' },
     { name: 'Economy', href: '/category/economy' },
     { name: 'World', href: '/category/world' },

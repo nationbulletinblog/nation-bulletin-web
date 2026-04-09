@@ -1,4 +1,5 @@
 import { createClient } from 'next-sanity'
+import imageUrlBuilder from '@sanity/image-url'
 
 export const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!
 export const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
@@ -8,8 +9,14 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: false, // Set to false if statically generating pages, using ISR or tag-based revalidation
+  useCdn: false,
 })
+
+const builder = imageUrlBuilder(client)
+
+export function urlFor(source: any) {
+  return builder.image(source)
+}
 
 // Client with write access
 export const writeClient = createClient({
