@@ -127,10 +127,7 @@ export default async function Home() {
 
             {/* Right Sidebar Area (3/12 Cols = 25%) */}
             <div className="lg:w-1/4">
-               <div className="sticky top-32">
-                  {/* @ts-expect-error Server Component */}
-                  <Sidebar />
-               </div>
+                <Sidebar />
             </div>
           </div>
         </div>

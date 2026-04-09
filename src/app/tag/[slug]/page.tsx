@@ -67,7 +67,6 @@ export default async function TagPage({ params }: { params: Promise<{ slug: stri
           {/* Sidebar */}
           <div className="lg:w-1/3">
              <div className="sticky top-32">
-                {/* @ts-expect-error Server Component */}
                 <Sidebar />
              </div>
           </div>
