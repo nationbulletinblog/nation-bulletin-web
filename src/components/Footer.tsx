@@ -32,9 +32,9 @@ export const Footer = () => {
             <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-8 border-b border-zinc-800 pb-4">Quick Links</h4>
             <ul className="space-y-4 text-[11px] font-black uppercase tracking-widest text-zinc-400">
               <li><Link href="/blog" className="hover:text-white transition-colors">Front Page</Link></li>
-              <li><Link href="/category/politics" className="hover:text-white transition-colors">Political Analysis</Link></li>
-              <li><Link href="/category/economy" className="hover:text-white transition-colors">Global Economy</Link></li>
-              <li><Link href="/category/opinion" className="hover:text-white transition-colors">Opinion Pieces</Link></li>
+              <li><Link href="/category/finance" className="hover:text-white transition-colors">Finance</Link></li>
+              <li><Link href="/category/tech" className="hover:text-white transition-colors">Tech</Link></li>
+              <li><Link href="/category/education" className="hover:text-white transition-colors">Education</Link></li>
             </ul>
           </div>
 
@@ -42,10 +42,10 @@ export const Footer = () => {
           <div>
             <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-8 border-b border-zinc-800 pb-4">Main Categories</h4>
             <ul className="space-y-4 text-[11px] font-black uppercase tracking-widest text-zinc-400">
-              <li><Link href="/category/technology" className="hover:text-white transition-colors">Technology</Link></li>
-              <li><Link href="/category/business" className="hover:text-white transition-colors">Business</Link></li>
-              <li><Link href="/category/lifestyle" className="hover:text-white transition-colors">Lifestyle</Link></li>
-              <li><Link href="/category/culture" className="hover:text-white transition-colors">World Culture</Link></li>
+              <li><Link href="/category/health" className="hover:text-white transition-colors">Health</Link></li>
+              <li><Link href="/category/home" className="hover:text-white transition-colors">Home</Link></li>
+              <li><Link href="/category/education" className="hover:text-white transition-colors">Education</Link></li>
+              <li><Link href="/category/travel" className="hover:text-white transition-colors">Travel</Link></li>
             </ul>
           </div>
 
@@ -76,8 +76,9 @@ export const Footer = () => {
               </span>
            </div>
            <div className="flex items-center space-x-8">
-              <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
+              <Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
+              <Link href="/content-policy" className="hover:text-primary transition-colors">Content Policy</Link>
               <Link href="/write-for-us" className="hover:text-primary transition-colors">Become a Contributor</Link>
            </div>
         </div>

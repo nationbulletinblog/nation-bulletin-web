@@ -4,6 +4,7 @@ import { Calendar, User, Eye, Clock, Send, Globe, Share2, Bookmark, ArrowRight }
 import Link from 'next/link'
 import { client, urlFor } from '@/lib/sanity.client'
 import { PortableText } from '@portabletext/react'
+import { PortableBody } from '@/components/PortableBody'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
@@ -113,7 +114,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
              {/* Prose Content */}
              <div className="max-w-2xl mx-auto">
                 <div className="prose prose-xl prose-zinc dark:prose-invert prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tighter prose-p:font-sans prose-p:text-zinc-600 prose-p:leading-relaxed">
-                   <PortableText value={post.body} />
+                   <PortableBody value={post.body} />
                 </div>
 
                 {/* Article Tags */}

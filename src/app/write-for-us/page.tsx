@@ -4,9 +4,12 @@ import { PenTool, Zap, Lock } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Link from "next/link";
+import { getStaticPageBySlug } from "@/lib/staticPage";
+import { PortableBody } from "@/components/PortableBody";
 
 export default async function WriteForUsPage() {
   const session = await getServerSession(authOptions);
+  const cms = await getStaticPageBySlug("write-for-us");
 
   return (
     <div className="bg-background min-h-screen pb-24">
@@ -31,7 +34,12 @@ export default async function WriteForUsPage() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-20">
            {/* Form Section */}
-           <div className="lg:w-2/3">
+           <div className="lg:w-2/3 space-y-16">
+              {cms?.body?.length ? (
+                <div className="prose prose-lg prose-zinc max-w-none dark:prose-invert prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tighter">
+                  <PortableBody value={cms.body} />
+                </div>
+              ) : null}
               {session ? (
                 <SubmissionForm session={session} />
               ) : (

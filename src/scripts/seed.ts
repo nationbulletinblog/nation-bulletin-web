@@ -3,11 +3,15 @@ import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { markdownToPortableText, type ImageRefMap } from './lib/mdToPortableText';
+import { loadMarkdownAndImages, parseArticles, sliceStaticSection } from './lib/parseNationBulletin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 dotenv.config({ path: join(__dirname, '../../.env') });
+
+const repoRoot = join(__dirname, '../..', '..');
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -17,25 +21,75 @@ const client = createClient({
   apiVersion: '2023-05-03',
 });
 
-async function uploadImage(url: string) {
+const CATEGORIES: { title: string; slug: string }[] = [
+  { title: 'Finance', slug: 'finance' },
+  { title: 'Tech', slug: 'tech' },
+  { title: 'Health', slug: 'health' },
+  { title: 'Home', slug: 'home' },
+  { title: 'Education', slug: 'education' },
+  { title: 'Travel', slug: 'travel' },
+];
+
+function postDocId(slug: string): string {
+  const safe = slug.replace(/[^a-z0-9-]/gi, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  return `post-${safe}`.slice(0, 128);
+}
+
+function excerptFromMarkdown(md: string): string {
+  const blocks = md.split(/\n\n+/);
+  for (const b of blocks) {
+    const t = b.trim();
+    if (!t || t.startsWith('#') || t.startsWith('![') || t.startsWith('* ') || t.startsWith('- ')) continue;
+    return t
+      .replace(/\*\*/g, '')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replace(/\s+/g, ' ')
+      .slice(0, 280)
+      .trim();
+  }
+  return '';
+}
+
+async function wipeSeededContent() {
+  const [postIds, staticIds, tagIds, catIds] = await Promise.all([
+    client.fetch<string[]>('*[_type == "post"]._id'),
+    client.fetch<string[]>('*[_type == "staticPage"]._id'),
+    client.fetch<string[]>('*[_type == "tag"]._id'),
+    client.fetch<string[]>('*[_type == "category"]._id'),
+  ]);
+
+  const runDeletes = async (ids: string[]) => {
+    const chunk = 50;
+    for (let i = 0; i < ids.length; i += chunk) {
+      const trx = client.transaction();
+      for (const id of ids.slice(i, i + chunk)) trx.delete(id);
+      await trx.commit();
+    }
+  };
+
+  await runDeletes(postIds);
+  await runDeletes(staticIds);
+  await runDeletes(tagIds);
+  await runDeletes(catIds);
+}
+
+async function uploadImageBuffer(buf: Buffer, filename: string): Promise<string | null> {
   try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
-    const buffer = await response.arrayBuffer();
-    const asset = await client.assets.upload('image', Buffer.from(buffer), {
-      filename: url.split('/').pop(),
-    });
+    const asset = await client.assets.upload('image', buf, { filename });
     return asset._id;
-  } catch (error) {
-    console.error('Error uploading image:', error);
+  } catch (e) {
+    console.error('Image upload failed:', filename, e);
     return null;
   }
 }
 
 async function seed() {
-  console.log('Starting seeding process...');
+  console.log('Loading Nation Bulletin Blogs.md …');
+  const { textPart, imageBuffers } = await loadMarkdownAndImages(repoRoot);
 
-  // 1. Create Author
+  console.log('Removing existing posts, static pages, tags, and categories …');
+  await wipeSeededContent();
+
   const passwordHash = await bcrypt.hash('1234', 10);
   const author = {
     _type: 'author',
@@ -43,7 +97,7 @@ async function seed() {
     name: 'Pratik',
     slug: { _type: 'slug', current: 'pratik' },
     email: 'pratik@gmail.com',
-    passwordHash: passwordHash,
+    passwordHash,
     bio: [
       {
         _type: 'block',
@@ -53,126 +107,137 @@ async function seed() {
       },
     ],
   };
-
-  console.log('Creating author...');
   await client.createOrReplace(author);
 
-  // 2. Create Categories
-  const categories = [
-    { title: 'Technology', slug: 'technology' },
-    { title: 'Lifestyle', slug: 'lifestyle' },
-    { title: 'Business', slug: 'business' },
-    { title: 'Travel', slug: 'travel' },
-    { title: 'Health', slug: 'health' },
-  ];
-
-  const categoryIds: string[] = [];
-  for (const cat of categories) {
-    console.log(`Creating category: ${cat.title}`);
-    const res = await client.createOrReplace({
+  const categoryRefs: Record<string, string> = {};
+  for (const cat of CATEGORIES) {
+    const _id = `cat-${cat.slug}`;
+    await client.createOrReplace({
       _type: 'category',
-      _id: `cat-${cat.slug}`,
+      _id,
       title: cat.title,
       slug: { _type: 'slug', current: cat.slug },
-      description: `All about ${cat.title}`,
+      description: `${cat.title} news and analysis from Nation Bulletin.`,
     });
-    categoryIds.push(res._id);
+    categoryRefs[cat.slug] = _id;
   }
 
-  // 3. Create Tags
-  const tags = ['Next.js', 'React', 'Web Dev', 'AI', 'Marketing', 'SEO', 'Fitness', 'Cooking', 'Finance', 'Startup'];
-  const tagIds: string[] = [];
-  for (const tag of tags) {
-    console.log(`Creating tag: ${tag}`);
-    const res = await client.createOrReplace({
+  const tagRefs: Record<string, string> = {};
+  const extraTags = ['Nation Bulletin', ...CATEGORIES.map((c) => c.title)];
+  for (const title of extraTags) {
+    const slug = title.toLowerCase().replace(/\s+/g, '-');
+    const _id = `tag-${slug}`;
+    await client.createOrReplace({
       _type: 'tag',
-      _id: `tag-${tag.toLowerCase().replace(/\s+/g, '-')}`,
-      title: tag,
-      slug: { _type: 'slug', current: tag.toLowerCase().replace(/\s+/g, '-') },
-    });
-    tagIds.push(res._id);
-  }
-
-  // 4. Create 20 Posts
-  for (let i = 1; i <= 20; i++) {
-    const title = `The Future of ${tags[i % tags.length]} in 2026 - Part ${i}`;
-    const slug = title.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '-');
-    const imageUrl = `https://picsum.photos/seed/${slug}/1200/800`;
-    
-    console.log(`Creating post ${i}: ${title}`);
-    const imageAssetId = await uploadImage(imageUrl);
-
-    const post = {
-      _type: 'post',
-      _id: `post-${i}`,
+      _id,
       title,
       slug: { _type: 'slug', current: slug },
-      author: { _type: 'reference', _ref: 'author-pratik' },
-      mainImage: imageAssetId ? {
-        _type: 'image',
-        asset: { _type: 'reference', _ref: imageAssetId },
-      } : undefined,
-      categories: [
-        { _type: 'reference', _ref: categoryIds[i % categoryIds.length], _key: `cat-${i}` },
-      ],
-      tags: [
-        { _type: 'reference', _ref: tagIds[i % tagIds.length], _key: `tag1-${i}` },
-        { _type: 'reference', _ref: tagIds[(i + 1) % tagIds.length], _key: `tag2-${i}` },
-      ],
-      publishedAt: new Date(Date.now() - i * 86400000).toISOString(), // Spread out dates
-      body: [
-        {
-          _key: `block1-${i}`,
-          _type: 'block',
-          children: [{ _key: `span1-${i}`, _type: 'span', text: `In the rapidly shifting landscape of ${tags[i % tags.length]}, we are witnessing a paradigm shift that redefines our understanding of efficiency and scale.` }],
-          markDefs: [],
-          style: 'normal',
-        },
-        {
-          _key: `block2-${i}`,
-          _type: 'block',
-          children: [{ _key: `span2-${i}`, _type: 'span', text: 'Recent developments have shown that the convergence of decentralized systems and algorithmic oversight is creating new opportunities for sustainable growth. This intelligence dispatch dives deep into the metrics that matter for professionals in this sector.' }],
-          markDefs: [],
-          style: 'normal',
-        },
-        {
-          _key: `block3-${i}`,
-          _type: 'block',
-          children: [{ _key: `span3-${i}`, _type: 'span', text: 'Traditional frameworks are increasingly becoming obsolete as we transition into an era where real-time data analysis drives every strategic decision. The ability to pivot quickly based on predictive modeling is no longer a luxury but a fundamental necessity for survival in the global market.' }],
-          markDefs: [],
-          style: 'normal',
-        },
-        {
-          _key: `block4-${i}`,
-          _type: 'block',
-          children: [{ _key: `span4-${i}`, _type: 'span', text: 'Furthermore, the ethical implications of these advancements cannot be overlooked. As we push the boundaries of what is technically possible, we must also refine our legislative structures to ensure that innovation serves the broader public interest without compromising individual security.' }],
-          markDefs: [],
-          style: 'normal',
-        },
-        {
-          _key: `block5-${i}`,
-          _type: 'block',
-          children: [{ _key: `span5-${i}`, _type: 'span', text: 'Our investigation into the core components of this evolution reveals three key pillars: scalability, transparency, and interoperability. By focusing on these areas, stakeholders can navigate the complexities of the current ecosystem with greater confidence and precision.' }],
-          markDefs: [],
-          style: 'normal',
-        },
-        {
-          _key: `block6-${i}`,
-          _type: 'block',
-          children: [{ _key: `span6-${i}`, _type: 'span', text: 'In conclusion, the path forward requires a balanced approach that combines aggressive technological integration with a cautious appraisal of potential risks. The future of the industry depends on our collective ability to maintain this equilibrium.' }],
-          markDefs: [],
-          style: 'normal',
-        },
-      ],
-    };
-
-    await client.createOrReplace(post);
+    });
+    tagRefs[slug] = _id;
   }
 
-  console.log('Seeding completed successfully!');
+  const imageAssetIds: Record<number, string> = {};
+  for (let n = 1; n <= 11; n++) {
+    const buf = imageBuffers.get(n);
+    if (!buf) {
+      console.warn(`No embedded image${n} in markdown`);
+      continue;
+    }
+    const id = await uploadImageBuffer(buf, `nation-bulletin-image-${n}.png`);
+    if (id) imageAssetIds[n] = id;
+  }
+
+  const imageRefs: ImageRefMap = {};
+  for (let n = 1; n <= 11; n++) {
+    const ref = imageAssetIds[n];
+    if (ref) imageRefs[`image${n}`] = { _type: 'reference', _ref: ref };
+  }
+
+  const articles = parseArticles(textPart);
+  console.log(`Parsed ${articles.length} articles`);
+
+  let publishedOffset = 0;
+  for (const a of articles) {
+    const pid = postDocId(a.slug);
+    const catId = categoryRefs[a.categorySlug];
+    if (!catId) {
+      console.warn('Unknown category', a.categorySlug, a.title);
+      continue;
+    }
+    const mainAsset = imageAssetIds[a.imageIndex];
+    const body = markdownToPortableText(a.bodyMarkdown, imageRefs);
+    const excerpt = excerptFromMarkdown(a.bodyMarkdown) || a.title;
+
+    await client.createOrReplace({
+      _type: 'post',
+      _id: pid,
+      title: a.title,
+      slug: { _type: 'slug', current: a.slug },
+      excerpt,
+      author: { _type: 'reference', _ref: 'author-pratik' },
+      mainImage: mainAsset
+        ? { _type: 'image', asset: { _type: 'reference', _ref: mainAsset } }
+        : undefined,
+      categories: [{ _type: 'reference', _ref: catId, _key: `c-${pid}` }],
+      tags: [
+        { _type: 'reference', _ref: tagRefs[a.categorySlug], _key: `t1-${pid}` },
+        { _type: 'reference', _ref: tagRefs['nation-bulletin'], _key: `t2-${pid}` },
+      ],
+      publishedAt: new Date(Date.now() - publishedOffset * 86400000).toISOString(),
+      body,
+    });
+    publishedOffset++;
+    console.log('Post:', a.title);
+  }
+
+  const staticSpecs: { _id: string; slug: string; title: string; start: string; end: string | null }[] = [
+    {
+      _id: 'static-page-write-for-us',
+      slug: 'write-for-us',
+      title: 'Write for Us',
+      start: '# Write for us Content',
+      end: '# Privacy Policy',
+    },
+    {
+      _id: 'static-page-privacy',
+      slug: 'privacy',
+      title: 'Privacy Policy',
+      start: '# Privacy Policy',
+      end: '# Terms & Condition',
+    },
+    {
+      _id: 'static-page-terms',
+      slug: 'terms',
+      title: 'Terms and Conditions',
+      start: '# Terms & Condition',
+      end: '# Content Policy',
+    },
+    {
+      _id: 'static-page-content-policy',
+      slug: 'content-policy',
+      title: 'Content Policy',
+      start: '# Content Policy',
+      end: null,
+    },
+  ];
+
+  for (const spec of staticSpecs) {
+    const md = sliceStaticSection(textPart, spec.start, spec.end);
+    const body = markdownToPortableText(md, imageRefs);
+    await client.createOrReplace({
+      _type: 'staticPage',
+      _id: spec._id,
+      title: spec.title,
+      slug: { _type: 'slug', current: spec.slug },
+      body,
+    });
+    console.log('Static page:', spec.slug);
+  }
+
+  console.log('Seeding completed successfully.');
 }
 
 seed().catch((err) => {
-  console.error('Seeding failed:', err);
+  console.error(err);
   process.exit(1);
 });
