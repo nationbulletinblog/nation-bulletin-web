@@ -1,6 +1,6 @@
 /**
  * Minimal Markdown → Sanity Portable Text for Nation Bulletin import.
- * Handles: ##/### headings with ** wrappers, bullets, paragraphs, [text](url), **bold**, ![][imageN].
+ * Handles: ##/### headings, bullets, numbered lists, paragraphs, [text](url), **bold**, ![][imageN].
  */
 
 export type ImageRefMap = Record<string, { _type: 'reference'; _ref: string }>;
@@ -87,6 +87,12 @@ function stripHeading(trimmed: string): string {
     .trim();
 }
 
+function isSeparatorLine(trimmed: string): boolean {
+  if (!trimmed) return false;
+  const t = trimmed.replace(/^\\+/, '');
+  return /^=+$/.test(t);
+}
+
 export function markdownToPortableText(md: string, imageRefs: ImageRefMap): Record<string, unknown>[] {
   const blocks: Record<string, unknown>[] = [];
   const lines = md.split('\n');
@@ -102,6 +108,11 @@ export function markdownToPortableText(md: string, imageRefs: ImageRefMap): Reco
 
   for (const raw of lines) {
     const trimmed = raw.replace(/\r$/, '').trim();
+
+    if (isSeparatorLine(trimmed)) {
+      flushPara();
+      continue;
+    }
 
     const imgLine = trimmed.match(/^!?\[\]\[image(\d+)\]\s*$/);
     if (imgLine) {
@@ -122,7 +133,7 @@ export function markdownToPortableText(md: string, imageRefs: ImageRefMap): Reco
     const restAfterHashes = trimmed.replace(/^#{1,3}\s+/, '').trim();
     const isHeading =
       hl &&
-      (/^#{1,3}\s+\*\*/.test(trimmed) || /^\*\*.+\*\*$/.test(restAfterHashes));
+      (/^#{1,3}\s+\*\*/.test(trimmed) || /^\*\*.+\*\*$/.test(restAfterHashes) || restAfterHashes.length > 0);
 
     if (isHeading && hl) {
       flushPara();
@@ -132,11 +143,21 @@ export function markdownToPortableText(md: string, imageRefs: ImageRefMap): Reco
       continue;
     }
 
-    if (/^[-*]\s+/.test(trimmed)) {
+    const bullet = trimmed.match(/^([-*•]|[✔✅❌])\s+(.+)$/);
+    if (bullet) {
       flushPara();
-      const item = trimmed.replace(/^[-*]\s+/, '');
+      const item = bullet[2];
       const { children, markDefs } = parseInline(item);
       blocks.push(blk('normal', children, markDefs, 'bullet', 1));
+      continue;
+    }
+
+    const ordered = trimmed.match(/^(\d+)[.)]\s+(.+)$/);
+    if (ordered) {
+      flushPara();
+      const item = ordered[2];
+      const { children, markDefs } = parseInline(item);
+      blocks.push(blk('normal', children, markDefs, 'number', 1));
       continue;
     }
 
