@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { Search, Menu, X, User, LogOut, Edit3, ChevronDown, Globe } from 'lucide-react'
@@ -32,12 +33,16 @@ export const Header = () => {
   }
 
   const navLinks = [
-    { name: 'Politics', href: '/category/politics' },
-    { name: 'Economy', href: '/category/economy' },
-    { name: 'World', href: '/category/world' },
     { name: 'Business', href: '/category/business' },
-    { name: 'Opinion', href: '/category/opinion' },
-    { name: 'Tech', href: '/category/technology' },
+    { name: 'Health', href: '/category/health' },
+    { name: 'Services', href: '/category/services' },
+    { name: 'Education', href: '/category/education' },
+    { name: 'Technology', href: '/category/technology' },
+    { name: 'Shopping', href: '/category/shopping' },
+    { name: 'Home', href: '/category/home' },
+    { name: 'General', href: '/category/general' },
+    { name: 'SEO', href: '/category/seo' },
+    { name: 'Travel', href: '/category/travel' },
   ]
 
   return (
@@ -45,23 +50,17 @@ export const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           {/* Logo - Left Aligned */}
-          <Link href="/" className="flex flex-col group">
-            <h1 className="text-3xl md:text-5xl font-black tracking-tighter text-foreground leading-none">
-              NATION<span className="text-primary italic">.</span>BULLETIN
-            </h1>
-            <div className="flex items-center gap-2 mt-1">
-               <span className="h-[2px] w-8 bg-primary"></span>
-               <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-400">Global News</span>
-            </div>
+          <Link href="/" className="flex flex-col group py-1">
+             <Image src="/logo.png" alt="Nation Bulletin Logo" width={450} height={150} className="object-contain h-24 md:h-36 w-auto" priority />
           </Link>
 
           {/* Navigation - Centered (Desktop) */}
-          <nav className="hidden lg:flex items-center space-x-1">
+          <nav className="hidden lg:flex items-center space-x-0.5">
              {navLinks.map((link) => (
                 <Link 
                   key={link.name} 
                   href={link.href}
-                  className="px-4 py-2 text-xs font-black uppercase tracking-widest text-zinc-500 hover:text-primary hover:bg-muted transition-all rounded-lg"
+                  className="px-2.5 py-2 text-[10px] font-black uppercase tracking-wider text-zinc-500 hover:text-primary transition-all"
                 >
                   {link.name}
                 </Link>
@@ -69,8 +68,8 @@ export const Header = () => {
           </nav>
 
           {/* Utilities - Right Aligned */}
-          <div className="flex items-center space-x-4 md:space-x-8">
-             <div className="hidden md:flex items-center gap-4 border-r border-border pr-8 mr-4">
+          <div className="flex items-center space-x-4 md:space-x-6">
+             <div className="hidden md:flex items-center gap-4 border-r border-border pr-6">
                 <div className="relative flex items-center">
                    {isSearchOpen ? (
                       <form onSubmit={handleSearchSubmit} className="absolute right-0 flex items-center animate-in slide-in-from-right-4 duration-300">
@@ -79,7 +78,7 @@ export const Header = () => {
                            type="text" 
                            value={searchQuery}
                            onChange={(e) => setSearchQuery(e.target.value)}
-                           className="bg-muted border border-primary px-4 py-2 text-xs font-black uppercase tracking-widest outline-none w-64"
+                           className="bg-muted border border-primary px-4 py-2 text-xs font-black uppercase tracking-widest outline-none w-48"
                            placeholder="SEARCH..."
                          />
                          <button type="button" onClick={() => setIsSearchOpen(false)} className="ml-2 text-zinc-400 hover:text-primary">
@@ -113,10 +112,10 @@ export const Header = () => {
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 md:gap-4">
-                    <Link href="/login" className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-primary transition-colors">Login</Link>
-                    <Link href="/register" className="px-6 py-3 bg-secondary text-white text-[10px] font-black uppercase tracking-widest hover:bg-primary transition-all shadow-xl shadow-secondary/10 active:scale-95">
-                      Subscribe
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <Link href="/login" className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-primary transition-colors">Login</Link>
+                    <Link href="/register" className="px-6 py-3 bg-secondary text-white text-[10px] font-black uppercase tracking-widest hover:bg-primary transition-all shadow-lg active:scale-95">
+                      Register
                     </Link>
                   </div>
                 )}

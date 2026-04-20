@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { createClient } from '@sanity/client';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
@@ -22,11 +23,15 @@ const client = createClient({
 });
 
 const CATEGORIES: { title: string; slug: string }[] = [
-  { title: 'Finance', slug: 'finance' },
-  { title: 'Tech', slug: 'tech' },
+  { title: 'Business', slug: 'business' },
   { title: 'Health', slug: 'health' },
-  { title: 'Home', slug: 'home' },
+  { title: 'Services', slug: 'services' },
   { title: 'Education', slug: 'education' },
+  { title: 'Technology', slug: 'technology' },
+  { title: 'Shopping', slug: 'shopping' },
+  { title: 'Home', slug: 'home' },
+  { title: 'General', slug: 'general' },
+  { title: 'SEO', slug: 'seo' },
   { title: 'Travel', slug: 'travel' },
 ];
 
@@ -147,8 +152,32 @@ async function seed() {
     if (id) imageAssetIds[n] = id;
   }
 
+  // Upload generated travel images (12-20)
+  const travelAssets: Record<number, string> = {
+    12: 'kerala.png',
+    13: 'ladakh.png',
+    14: 'varanasi.png',
+    15: 'goa.png',
+    16: 'rishikesh.png',
+    17: 'agra.png',
+    18: 'andaman.png',
+    19: 'udaipur.png',
+    20: 'meghalaya.png',
+  };
+
+  for (const [idx, filename] of Object.entries(travelAssets)) {
+    const localPath = join(__dirname, 'assets', 'seed', filename);
+    if (fs.existsSync(localPath)) {
+      const buf = fs.readFileSync(localPath);
+      const id = await uploadImageBuffer(buf, `generated-${filename}`);
+      if (id) imageAssetIds[Number(idx)] = id;
+    } else {
+      console.warn(`Missing local asset: ${localPath}`);
+    }
+  }
+
   const imageRefs: ImageRefMap = {};
-  for (let n = 1; n <= 11; n++) {
+  for (let n = 1; n <= 20; n++) {
     const ref = imageAssetIds[n];
     if (ref) imageRefs[`image${n}`] = { _type: 'reference', _ref: ref };
   }

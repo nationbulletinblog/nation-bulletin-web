@@ -92,13 +92,59 @@ export function parseArticles(textPart: string): ParsedArticle[] {
     if (!pending) return;
     const bodyMarkdown = stripTrailingStaticSections(bodyLines.join('\n').trim());
     bodyLines.length = 0;
-    articles.push({
-      categorySlug: pending.categorySlug,
-      title: pending.title,
-      slug: slugify(pending.title),
-      imageIndex: pending.imageIndex,
-      bodyMarkdown,
-    });
+
+    // Special case: Split "Top 10 Places to Visit in India" into 10 articles
+    if (pending.title.toLowerCase().includes('top 10 places to visit in india')) {
+      console.log('Splitting Travel article:', pending.title);
+      // Split by ## **1\. Title** - more robust regex
+      const sections = bodyMarkdown.split(/\n##\s+\*\*\d+[\.\\\s]+/);
+      console.log('Found sections:', sections.length);
+      // First section is intro
+      const intro = sections[0].trim();
+      let travelImageCounter = 0;
+
+      for (let s = 1; s < sections.length; s++) {
+        const sectionContent = sections[s].trim();
+        // The first line of sectionContent is " Jaipur – The Royal Pink City**"
+        const titleMatch = sectionContent.match(/^\*\*(.+?)\*\*/);
+        if (!titleMatch) {
+            // Fallback if title regex fails but section was found
+            const firstLine = sectionContent.split('\n')[0].replace(/\*\*/g, '').trim();
+            articles.push({
+                categorySlug: 'travel',
+                title: firstLine,
+                slug: slugify(firstLine),
+                imageIndex: 11 + travelImageCounter,
+                bodyMarkdown: sectionContent,
+            });
+            travelImageCounter++;
+            continue;
+        }
+        
+        if (titleMatch) {
+          const placeTitle = titleMatch[1].replace(/^[ \d.]*/, '').replace(/^\\/, '').trim();
+          const placeBody = sectionContent.replace(/^\*\*.+?\*\*/, '').trim();
+          
+          articles.push({
+            categorySlug: 'travel',
+            title: placeTitle,
+            slug: slugify(placeTitle),
+            // First travel article keeps image11, others use 12-20
+            imageIndex: travelImageCounter === 0 ? 11 : 11 + travelImageCounter,
+            bodyMarkdown: travelImageCounter === 0 ? `${intro}\n\n${placeBody}` : placeBody,
+          });
+          travelImageCounter++;
+        }
+      }
+    } else {
+      articles.push({
+        categorySlug: pending.categorySlug,
+        title: pending.title,
+        slug: slugify(pending.title),
+        imageIndex: pending.imageIndex,
+        bodyMarkdown,
+      });
+    }
     pending = null;
   };
 

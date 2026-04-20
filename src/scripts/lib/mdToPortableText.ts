@@ -99,7 +99,8 @@ export function markdownToPortableText(md: string, imageRefs: ImageRefMap): Reco
   let para = '';
 
   const flushPara = () => {
-    const t = para.trim();
+    // Before flushing, remove literal backslashes used for escaping (e.g., \. or \&)
+    const t = para.trim().replace(/\\(.)/g, '$1');
     if (!t) return;
     const { children, markDefs } = parseInline(t);
     if (children.length) blocks.push(blk('normal', children, markDefs));
@@ -137,7 +138,8 @@ export function markdownToPortableText(md: string, imageRefs: ImageRefMap): Reco
 
     if (isHeading && hl) {
       flushPara();
-      const text = stripHeading(trimmed);
+      // Remove literal backslashes from heading text
+      const text = stripHeading(trimmed).replace(/\\(.)/g, '$1');
       const { children, markDefs } = parseInline(text);
       blocks.push(blk(hl, children, markDefs));
       continue;
@@ -146,16 +148,18 @@ export function markdownToPortableText(md: string, imageRefs: ImageRefMap): Reco
     const bullet = trimmed.match(/^([-*•]|[✔✅❌])\s+(.+)$/);
     if (bullet) {
       flushPara();
-      const item = bullet[2];
+      // Remove literal backslashes from list item
+      const item = bullet[2].replace(/\\(.)/g, '$1');
       const { children, markDefs } = parseInline(item);
       blocks.push(blk('normal', children, markDefs, 'bullet', 1));
       continue;
     }
 
-    const ordered = trimmed.match(/^(\d+)[.)]\s+(.+)$/);
+    const ordered = trimmed.match(/^(\d+)[.)\\]+\s+(.+)$/);
     if (ordered) {
       flushPara();
-      const item = ordered[2];
+      // Remove literal backslashes from ordered item
+      const item = ordered[2].replace(/\\(.)/g, '$1');
       const { children, markDefs } = parseInline(item);
       blocks.push(blk('normal', children, markDefs, 'number', 1));
       continue;
