@@ -26,7 +26,7 @@ export const Footer = () => {
   ]
 
   return (
-    <footer className="bg-[#111111] text-[#CCCCCC] pt-20">
+    <footer className="bg-[#111111] text-zinc-300 pt-20">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
           {/* Column 1: Brand Info & Paid Opportunity */}
@@ -34,30 +34,30 @@ export const Footer = () => {
             <Link href="/" className="inline-block transition-opacity hover:opacity-80">
                <Image src="/logo_footer.png" alt="Nation Bulletin Logo" width={200} height={60} className="object-contain" />
             </Link>
-            <p className="text-xs leading-relaxed font-medium">
+            <p className="text-[13px] leading-relaxed font-medium text-zinc-400">
               NationBulletin is a free blogging platform where writers, businesses, and creators can publish high-quality content, share insights, and gain online visibility. Join us to grow your authority, reach a wider audience, and build strong SEO presence.
             </p>
             <div className="p-5 bg-zinc-800/50 border border-zinc-700 rounded-lg space-y-3">
                <h5 className="text-[10px] font-black uppercase tracking-widest text-primary italic underline underline-offset-4">Paid Content Opportunity</h5>
-               <p className="text-[10px] leading-relaxed text-zinc-400">
+               <p className="text-[11px] leading-relaxed text-zinc-300">
                   SEO-friendly guest posts, Do-follow backlinks, Brand promotion to a targeted audience, Fast approval and permanent placement.
                </p>
-               <div className="flex items-center gap-2 text-[10px] font-black text-white mt-4">
-                  <Mail className="w-3 h-3 text-primary" />
+               <div className="flex items-center gap-2 text-[11px] font-bold text-white mt-4">
+                  <Mail className="w-3.5 h-3.5 text-primary" />
                   <span>xyz@email.com</span>
                </div>
             </div>
           </div>
 
           {/* Column 2: Tags */}
-          <div className="border-l border-zinc-800 pl-0 md:pl-12">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white mb-8">Tags</h4>
+          <div className="border-l border-zinc-800 md:pl-12">
+            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8">Tags</h4>
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
                 <Link 
                   key={tag} 
                   href={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="px-3 py-1.5 bg-zinc-800 text-[9px] font-bold uppercase tracking-wider text-zinc-300 hover:bg-primary hover:text-white transition-all border border-zinc-700"
+                  className="px-3 py-1.5 bg-zinc-800 text-[10px] font-bold uppercase tracking-wider text-zinc-200 hover:bg-primary hover:text-white transition-all border border-zinc-700"
                 >
                   {tag}
                 </Link>
@@ -66,13 +66,13 @@ export const Footer = () => {
           </div>
 
           {/* Column 3: Sponsor Links */}
-          <div className="border-l border-zinc-800 pl-0 md:pl-12">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white mb-8">Sponsor Links</h4>
-            <ul className="space-y-3 text-[10px] font-bold uppercase tracking-widest">
+          <div className="border-l border-zinc-800 md:pl-12">
+            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8">Sponsor Links</h4>
+            <ul className="space-y-3 text-[11px] font-bold uppercase tracking-widest">
               {sponsorLinks.map((link) => (
                 <li key={link.name}>
-                  <Link href={link.href} className="text-zinc-400 hover:text-primary transition-colors flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-zinc-700 rounded-full" />
+                  <Link href={link.href} className="text-zinc-300 hover:text-primary transition-colors flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full" />
                     {link.name}
                   </Link>
                 </li>
@@ -81,36 +81,36 @@ export const Footer = () => {
           </div>
 
           {/* Column 4: Website Status & Social */}
-          <div className="border-l border-zinc-800 pl-0 md:pl-12 flex flex-col items-center text-center">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white mb-8 w-full text-left">Website Status</h4>
+          <div className="border-l border-zinc-800 md:pl-12 flex flex-col items-center text-center">
+            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8 w-full text-left">Website Status</h4>
             <div className="relative w-full aspect-square max-w-[200px] flex flex-col items-center justify-center p-6 bg-zinc-900 rounded-full border-4 border-primary/20 shadow-2xl">
                {/* Decorative Ring */}
                <div className="absolute inset-0 border-[8px] border-zinc-800 rounded-full" />
                <div className="relative z-10 space-y-2">
                   <div className="text-[10px] font-black text-zinc-500 uppercase">Nation Authority</div>
-                  <div className="flex items-center justify-center gap-4 text-white text-xs font-black">
+                  <div className="flex items-center justify-center gap-4 text-white text-[13px] font-black">
                      <div>DA - <span className="text-primary">37</span></div>
                      <div>PA - <span className="text-primary">46</span></div>
                   </div>
                   <div className="h-px bg-zinc-800 w-12 mx-auto my-2" />
-                  <div className="text-[9px] font-bold text-zinc-400">ALEXA: 34,297</div>
-                  <div className="text-[9px] font-bold text-zinc-400">COUNTRY: 4,366</div>
+                  <div className="text-[10px] font-bold text-zinc-300">ALEXA: 34,297</div>
+                  <div className="text-[10px] font-bold text-zinc-300">COUNTRY: 4,366</div>
                </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="py-8 bg-black -mx-[4px]">
+        <div className="py-8 bg-black -mx-4">
            <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8">
-              <div className="flex items-center gap-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">
+              <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">
                 <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
                 <Link href="/terms" className="hover:text-white transition-colors">Terms & Condition</Link>
                 <Link href="/content-policy" className="hover:text-white transition-colors">Content Policy</Link>
               </div>
               
-              <div className="flex items-center gap-6 text-[9px] font-black uppercase tracking-widest text-zinc-500">
-                 <span className="flex items-center gap-2 px-3 py-1 bg-zinc-900 border border-zinc-800 rounded text-zinc-400">
+              <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                 <span className="flex items-center gap-2 px-3 py-1 bg-zinc-900 border border-zinc-800 rounded text-zinc-300">
                     <ShieldCheck className="w-3 h-3 text-primary" /> DMCA PROTECTED
                  </span>
                  <span>Copyright © 2026 NationBulletin.com</span>

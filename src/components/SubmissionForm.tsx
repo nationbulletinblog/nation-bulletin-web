@@ -7,33 +7,33 @@ import dynamic from 'next/dynamic'
 import Select, { MultiValue, SingleValue } from 'react-select'
 import { blogSubmissionSchema, BlogSubmission } from '../lib/validation'
 import { submitBlogPost } from '../app/actions/submit-blog'
-import { Upload, X, Check, AlertCircle, Image as ImageIcon, Search } from 'lucide-react'
+import { Upload, X, Check, AlertCircle, Image as ImageIcon, Send, Type, Hash, Layers } from 'lucide-react'
 
 // Dynamic import for React Quill to prevent SSR issues
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false })
 import 'react-quill-new/dist/quill.snow.css'
 
 const CATEGORY_OPTIONS = [
-  { value: 'Technology', label: 'TECHNOLOGY' },
-  { value: 'Economy', label: 'ECONOMY' },
-  { value: 'Politics', label: 'POLITICS' },
-  { value: 'Culture', label: 'CULTURE' },
-  { value: 'Science', label: 'SCIENCE' },
-  { value: 'Lifestyle', label: 'LIFESTYLE' },
-  { value: 'Opinion', label: 'OPINION' },
+  { value: 'Technology', label: 'Technology' },
+  { value: 'Economy', label: 'Economy' },
+  { value: 'Politics', label: 'Politics' },
+  { value: 'Culture', label: 'Culture' },
+  { value: 'Science', label: 'Science' },
+  { value: 'Lifestyle', label: 'Lifestyle' },
+  { value: 'Opinion', label: 'Opinion' },
 ]
 
 const TAG_OPTIONS = [
-  { value: 'AI', label: '#AI' },
-  { value: 'Web3', label: '#WEB3' },
-  { value: 'Sustainability', label: '#SUSTAINABLE' },
-  { value: 'GlobalGrowth', label: '#GLOBALGROWTH' },
-  { value: 'FutureNow', label: '#FUTURENOW' },
-  { value: 'Investigative', label: '#INVESTIGATIVE' },
-  { value: 'Politics2024', label: '#POLITICS2024' },
-  { value: 'DigitalTransformation', label: '#DIGITALTRANSFORMATION' },
-  { value: 'Ethics', label: '#ETHICS' },
-  { value: 'CultureShock', label: '#CULTURESHOCK' },
+  { value: 'AI', label: 'AI' },
+  { value: 'Web3', label: 'Web3' },
+  { value: 'Sustainability', label: 'Sustainability' },
+  { value: 'GlobalGrowth', label: 'Global Growth' },
+  { value: 'FutureNow', label: 'Future Now' },
+  { value: 'Investigative', label: 'Investigative' },
+  { value: 'Politics2024', label: 'Politics' },
+  { value: 'DigitalTransformation', label: 'Digital' },
+  { value: 'Ethics', label: 'Ethics' },
+  { value: 'CultureShock', label: 'Culture' },
 ]
 
 import { Session } from 'next-auth'
@@ -81,13 +81,12 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
   }
 
   const onSubmit = async (data: BlogSubmission) => {
-    setStatus({ type: 'loading', message: 'Analyzing and submitting script...' })
+    setStatus({ type: 'loading', message: 'Preparing your article for review...' })
     
-    // Final check for tags to ensure they are properly formatted as strings
     const result = await submitBlogPost(data)
 
     if (result.success) {
-      setStatus({ type: 'success', message: 'Dispatch received. Our editors will review your script within 24 hours.' })
+      setStatus({ type: 'success', message: 'Thank you! Your article has been received. Our editorial team will review it shortly.' })
       reset()
       setPreviewImage(null)
     } else {
@@ -104,48 +103,44 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
     ],
   }), [])
 
-  // Custom styles for React Select to match the Editorial Theme
   const selectStyles = {
     control: (base: any, state: any) => ({
       ...base,
-      backgroundColor: '#f8f8f8',
-      borderRadius: '0',
-      border: state.isFocused ? '1px solid #910a0a' : '1px solid #eeeeee',
-      boxShadow: 'none',
-      padding: '8px 12px',
-      fontSize: '12px',
-      fontWeight: '800',
-      fontFamily: 'var(--font-outfit)',
+      backgroundColor: '#f9f9f9',
+      borderRadius: '12px',
+      border: state.isFocused ? '1px solid #910a0a' : '1px solid #e5e7eb',
+      boxShadow: state.isFocused ? '0 0 0 4px rgba(145, 10, 10, 0.05)' : 'none',
+      padding: '6px 12px',
+      fontSize: '14px',
+      fontWeight: '500',
+      transition: 'all 0.3s ease',
       '&:hover': {
         borderColor: '#910a0a'
       }
     }),
     placeholder: (base: any) => ({
       ...base,
-      color: '#aaa',
-      letterSpacing: '0.1em'
+      color: '#9ca3af',
     }),
     option: (base: any, state: any) => ({
       ...base,
       backgroundColor: state.isSelected ? '#910a0a' : state.isFocused ? '#fdecea' : 'white',
-      color: state.isSelected ? 'white' : '#111',
-      fontSize: '10px',
-      fontWeight: '900',
-      textTransform: 'uppercase',
-      letterSpacing: '0.1em',
+      color: state.isSelected ? 'white' : '#374151',
+      fontSize: '13px',
+      fontWeight: '600',
       cursor: 'pointer'
     }),
     multiValue: (base: any) => ({
       ...base,
       backgroundColor: '#910a0a',
-      borderRadius: '0',
+      borderRadius: '6px',
       padding: '2px 8px'
     }),
     multiValueLabel: (base: any) => ({
       ...base,
       color: 'white',
-      fontSize: '9px',
-      fontWeight: '900'
+      fontSize: '11px',
+      fontWeight: '700'
     }),
     multiValueRemove: (base: any) => ({
       ...base,
@@ -158,51 +153,56 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
   }
 
   return (
-    <div className="bg-white border-2 border-primary p-8 md:p-12 shadow-[20px_20px_0px_0px_rgba(145,10,10,0.1)]">
-      <div className="mb-12">
-         <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-2">Editorial Submission</h2>
-         <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Please provide all mandatory investigative fields below.</p>
+    <div className="bg-white rounded-2xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.06)] border border-zinc-100 p-8 md:p-12 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-1 bg-primary/20"></div>
+      
+      <div className="mb-10 text-left">
+         <h2 className="text-2xl font-black tracking-tight text-zinc-900 mb-2">Draft Your Article</h2>
+         <p className="text-sm font-medium text-zinc-500">Provide the details of your story below for editorial review.</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
-        {/* Author Metadata */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 border-l-4 border-primary pl-3">Full Identification</label>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        {/* Author Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Full Name</label>
             <input
               {...register('authorName')}
-              className="w-full px-5 py-4 bg-muted border border-border focus:border-primary focus:outline-none text-xs font-black uppercase tracking-widest"
-              placeholder="e.g. MARCUS AURELIUS"
+              placeholder="e.g. John Doe"
+              className="w-full px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-medium focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all duration-300"
             />
-            {errors.authorName && <p className="text-primary text-[10px] font-bold mt-1 uppercase tracking-tight">{errors.authorName.message}</p>}
           </div>
 
-          <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 border-l-4 border-primary pl-3">Secure Email Channel</label>
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Email Address</label>
             <input
               {...register('authorEmail')}
-              className="w-full px-5 py-4 bg-muted border border-border focus:border-primary focus:outline-none text-xs font-black uppercase tracking-widest"
-              placeholder="YOUR@SECUREMAIL.COM"
+              placeholder="name@company.com"
+              className="w-full px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-medium focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all duration-300"
             />
-            {errors.authorEmail && <p className="text-primary text-[10px] font-bold mt-1 uppercase tracking-tight">{errors.authorEmail.message}</p>}
           </div>
         </div>
 
-        {/* Global Cataloging */}
-        <div className="space-y-3">
-          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 border-l-4 border-primary pl-3">Story Headline</label>
-          <input
-            {...register('title')}
-            className="w-full px-5 py-4 bg-muted border border-border focus:border-primary focus:outline-none text-xs font-black uppercase tracking-widest"
-            placeholder="THE FUTURE OF AUTONOMOUS SYSTEMS..."
-          />
+        {/* Headline */}
+        <div className="space-y-2">
+          <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Article Headline</label>
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Type className="h-4 w-4 text-zinc-400 group-focus-within:text-primary transition-colors" />
+            </div>
+            <input
+              {...register('title')}
+              className="w-full pl-11 pr-4 py-4 bg-zinc-50 border border-zinc-200 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none text-sm transition-all duration-300 placeholder:text-zinc-300"
+              placeholder="e.g. How Technology is Reshaping Education..."
+            />
+          </div>
           {errors.title && <p className="text-primary text-[10px] font-bold mt-1 uppercase tracking-tight">{errors.title.message}</p>}
         </div>
 
-        {/* Searchable Selectors */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 border-l-4 border-primary pl-3">Primary Sector</label>
+        {/* Categorization */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <div className="space-y-2">
+            <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Category</label>
             <Controller
               name="category"
               control={control}
@@ -212,15 +212,15 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
                   options={CATEGORY_OPTIONS}
                   value={CATEGORY_OPTIONS.find(opt => opt.value === field.value)}
                   onChange={(val: SingleValue<{value: string, label: string}>) => field.onChange(val?.value)}
-                  placeholder="SELECT SECTOR..."
+                  placeholder="Select a category..."
                 />
               )}
             />
             {errors.category && <p className="text-primary text-[10px] font-bold mt-1 uppercase tracking-tight">{errors.category.message}</p>}
           </div>
 
-          <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 border-l-4 border-primary pl-3">Sector Tags</label>
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Tags</label>
             <Controller
               name="tags"
               control={control}
@@ -231,7 +231,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
                   options={TAG_OPTIONS}
                   value={TAG_OPTIONS.filter(opt => field.value?.includes(opt.value))}
                   onChange={(vals: MultiValue<{value: string, label: string}>) => field.onChange(vals.map(v => v.value))}
-                  placeholder="SELECT MULTIPLE TAGS..."
+                  placeholder="Add relevant tags..."
                 />
               )}
             />
@@ -239,38 +239,38 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
           </div>
         </div>
 
-        {/* Featured Imagery */}
-        <div className="space-y-3">
-          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 border-l-4 border-primary pl-3">Featured Story Imagery</label>
-          <div className={`relative border-2 border-dashed transition-all duration-300 ${previewImage ? 'border-primary' : 'border-zinc-200 hover:border-primary'}`}>
+        {/* Featured Image */}
+        <div className="space-y-2">
+          <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Featured Image</label>
+          <div className={`relative border-2 border-dashed rounded-2xl transition-all duration-300 ${previewImage ? 'border-primary' : 'border-zinc-200 hover:border-primary'}`}>
              {previewImage ? (
-                <div className="relative aspect-video w-full group overflow-hidden">
+                <div className="relative aspect-video w-full group overflow-hidden rounded-2xl">
                    <img src={previewImage} alt="Preview" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button 
                         type="button" 
                         onClick={removeImage}
-                        className="p-4 bg-primary text-white hover:bg-zinc-900 transition-colors"
+                        className="p-4 bg-primary text-white rounded-xl hover:bg-zinc-900 transition-colors shadow-xl"
                       >
                          <X className="w-6 h-6" />
                       </button>
                    </div>
                 </div>
              ) : (
-                <label className="flex flex-col items-center justify-center py-16 cursor-pointer group">
-                   <ImageIcon className="w-12 h-12 text-zinc-300 mb-4 group-hover:text-primary transition-colors" />
-                   <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-primary transition-colors">Click or drag image file here</span>
-                   <span className="mt-2 text-[8px] font-black text-zinc-300 uppercase">JPEG, PNG Max 5MB</span>
+                <label className="flex flex-col items-center justify-center py-12 cursor-pointer group">
+                   <ImageIcon className="w-12 h-12 text-zinc-300 mb-3 group-hover:text-primary transition-colors" />
+                   <span className="text-xs font-bold text-zinc-500 group-hover:text-primary transition-colors">Click to upload featured image</span>
+                   <span className="mt-1 text-[10px] font-medium text-zinc-400 uppercase">Recommended: 1200x630 (Max 5MB)</span>
                    <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                 </label>
              )}
           </div>
         </div>
 
-        {/* Narrative Content (RTE) */}
-        <div className="space-y-3">
-          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 border-l-4 border-primary pl-3">Narrative Body</label>
-          <div className="editorial-editor transition-all focus-within:border-primary border border-border">
+        {/* Content Editor */}
+        <div className="space-y-2">
+          <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Article Content</label>
+          <div className="editorial-editor transition-all focus-within:border-primary border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
             <Controller
               name="content"
               control={control}
@@ -280,7 +280,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
                   modules={quillModules}
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Initiate your investigative report here..."
+                  placeholder="Share your story with the world..."
                 />
               )}
             />
@@ -288,40 +288,43 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
           {errors.content && <p className="text-primary text-[10px] font-bold mt-1 uppercase tracking-tight">{errors.content.message}</p>}
         </div>
 
-        <div className="pt-8 border-t border-border">
+        <div className="pt-6 border-t border-zinc-100">
           <button
             type="submit"
             disabled={status.type === 'loading'}
-            className={`w-full py-6 text-xs font-black uppercase tracking-[0.3em] transition-all transform active:scale-[0.98] flex items-center justify-center gap-4 ${
+            className={`w-full py-5 text-sm font-bold tracking-wide transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 rounded-xl shadow-xl hover:shadow-zinc-900/20 ${
               status.type === 'loading'
-                ? 'bg-zinc-400 cursor-not-allowed text-zinc-600'
-                : 'bg-primary text-white hover:bg-zinc-900'
+                ? 'bg-zinc-300 cursor-not-allowed text-zinc-500'
+                : 'bg-zinc-900 text-white hover:bg-primary'
             }`}
           >
             {status.type === 'loading' ? (
-               <>Processing Security Check...</>
+               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             ) : (
-               <>Submit Narrative Dispatch <Check className="w-4 h-4" /></>
+               <>
+                 <span>Submit for Review</span>
+                 <Send className="w-4 h-4" />
+               </>
             )}
           </button>
         </div>
 
         {status.type !== 'idle' && (
           <div
-            className={`mt-10 p-8 flex items-start gap-4 animate-in fade-in slide-in-from-top-4 duration-500 ${
-              status.type === 'success' ? 'bg-green-50 border-l-4 border-green-500' : 'bg-red-50 border-l-4 border-red-500'
+            className={`mt-8 p-6 rounded-2xl flex items-start gap-4 animate-in fade-in slide-in-from-top-4 duration-500 border ${
+              status.type === 'success' ? 'bg-green-50/50 border-green-100 text-green-800' : 'bg-red-50/50 border-red-100 text-red-800'
             }`}
           >
             {status.type === 'success' ? (
-               <Check className="w-6 h-6 text-green-500 flex-shrink-0" />
+               <div className="w-8 h-8 bg-green-500 text-white rounded-lg flex items-center justify-center flex-shrink-0"><Check className="w-5 h-5" /></div>
             ) : (
-               <AlertCircle className="w-6 h-6 text-red-500 flex-shrink-0" />
+               <div className="w-8 h-8 bg-red-500 text-white rounded-lg flex items-center justify-center flex-shrink-0"><AlertCircle className="w-5 h-5" /></div>
             )}
             <div>
-               <h4 className={`text-sm font-black uppercase tracking-widest mb-1 ${status.type === 'success' ? 'text-green-700' : 'text-red-700'}`}>
-                  {status.type === 'success' ? 'Protocol Accepted' : 'Security Breach / Validation Error'}
+               <h4 className="text-sm font-black uppercase tracking-tight mb-1">
+                  {status.type === 'success' ? 'Submission Received' : 'Error Occurred'}
                </h4>
-               <p className={`text-xs font-medium leading-relaxed ${status.type === 'success' ? 'text-green-600/80' : 'text-red-600/80'}`}>{status.message}</p>
+               <p className="text-xs font-medium leading-relaxed opacity-80">{status.message}</p>
             </div>
           </div>
         )}
@@ -329,27 +332,31 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
 
       <style jsx global>{`
         .editorial-editor .ql-container {
-          min-height: 400px;
-          font-family: var(--font-outfit), sans-serif;
-          font-size: 14px;
+          min-height: 350px;
+          font-family: var(--font-sans), sans-serif;
+          font-size: 15px;
+          color: #374151;
         }
         .editorial-editor .ql-editor {
           padding: 24px;
+          line-height: 1.6;
         }
         .editorial-editor .ql-toolbar.ql-snow {
           border: none;
-          border-bottom: 1px solid #eeeeee;
+          background-color: #f9fafb;
+          border-bottom: 1px solid #e5e7eb;
           padding: 12px;
         }
         .editorial-editor .ql-container.ql-snow {
           border: none;
+          background-color: white;
         }
         .ql-snow .ql-stroke {
-          stroke: #111;
+          stroke: #4b5563;
         }
         .ql-snow .ql-picker {
-          color: #111;
-          font-weight: 800;
+          color: #4b5563;
+          font-weight: 600;
         }
         .ql-snow .ql-active .ql-stroke {
           stroke: #910a0a !important;
