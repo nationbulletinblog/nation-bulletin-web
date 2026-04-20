@@ -61,7 +61,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
              <span className="text-primary">{post.categories?.[0]?.title || 'General'}</span>
           </div>
           
-          <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter leading-[0.95] mb-6">
+          <h1 className="text-2xl md:text-4xl font-black uppercase tracking-tight leading-[1.1] mb-6">
             {post.title}
           </h1>
 
@@ -102,7 +102,9 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                     src={urlFor(post.mainImage).url()}
                     alt={post.title}
                     fill
+                    priority
                     className="object-cover group-hover:scale-105 transition-transform duration-1000"
+                    sizes="(max-width: 1024px) 100vw, 66vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
                   <div className="absolute bottom-4 left-4 text-white text-[10px] font-black uppercase tracking-widest z-20">
@@ -113,7 +115,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
 
              {/* Prose Content */}
              <div className="max-w-3xl mx-auto">
-                <div className="prose prose-lg md:prose-xl prose-zinc dark:prose-invert prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tighter prose-p:font-sans prose-p:text-zinc-600 prose-p:leading-relaxed">
+                <div className="prose prose-zinc dark:prose-invert max-w-none">
                    <PortableBody value={post.body} />
                 </div>
 

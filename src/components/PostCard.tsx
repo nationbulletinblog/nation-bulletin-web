@@ -30,24 +30,27 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   return (
     <article className="group flex flex-col bg-card border border-border hover:border-primary/30 transition-all duration-300">
       {/* Image Container */}
-      <Link href={`/blog/${post.slug.current}`} className="block relative aspect-[16/10] overflow-hidden">
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 z-10" />
-        {post.mainImage ? (
-          <Image
-            src={urlFor(post.mainImage).url()}
-            alt={post.title}
-            fill
-            className="object-cover transform group-hover:scale-110 transition-transform duration-1000 ease-out"
-          />
-        ) : (
-          <div className="w-full h-full bg-zinc-100" />
-        )}
-        
-        {/* Category Overlay */}
-        <div className="absolute top-4 left-4 z-20">
-           <span className="px-3 py-1 bg-primary text-white text-[9px] font-black uppercase tracking-widest shadow-xl">
-              {category}
-           </span>
+      <Link href={`/blog/${post.slug.current}`} className="block group">
+        <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 z-10" />
+          {post.mainImage ? (
+            <Image
+              src={urlFor(post.mainImage).url()}
+              alt={post.title}
+              fill
+              className="object-cover transform group-hover:scale-110 transition-transform duration-1000 ease-out"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-zinc-100 text-zinc-400">No Document Image</div>
+          )}
+          
+          {/* Category Overlay */}
+          <div className="absolute top-4 left-4 z-20">
+             <span className="px-3 py-1 bg-primary text-white text-[9px] font-black uppercase tracking-widest shadow-xl">
+                {category}
+             </span>
+          </div>
         </div>
       </Link>
 

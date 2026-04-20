@@ -51,7 +51,7 @@ export const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo - Left Aligned */}
           <Link href="/" className="flex flex-col group py-1">
-             <Image src="/logo.png" alt="Nation Bulletin Logo" width={450} height={150} className="object-contain h-24 md:h-36 w-auto" priority />
+             <Image src="/logo.png" alt="Nation Bulletin Logo" width={300} height={100} className="object-contain h-10 md:h-16 w-auto" priority />
           </Link>
 
           {/* Navigation - Centered (Desktop) */}

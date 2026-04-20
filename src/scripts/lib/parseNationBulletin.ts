@@ -18,20 +18,11 @@ function slugify(title: string): string {
     .slice(0, 90);
 }
 
-export function parseTitleLine(line: string): { title: string; inlineImage: number | null } {
-  const stripped = line.replace(/^#\s*/, '');
-  const withImg = stripped.match(/^\*\*(.+?)\*\*\s*\*\*!?\[\]\[image(\d+)\]\*\*/);
-  if (withImg) return { title: withImg[1].trim(), inlineImage: Number(withImg[2]) };
-  const simple = stripped.match(/^\*\*(.+?)\*\*\s*$/);
-  if (simple) return { title: simple[1].trim(), inlineImage: null };
-  return { title: stripped.replace(/\*\*/g, '').trim(), inlineImage: null };
-}
-
 export async function loadMarkdownAndImages(repoRoot: string): Promise<{
   textPart: string;
   imageBuffers: Map<number, Buffer>;
 }> {
-  const mdPath = path.join(repoRoot, 'Nation Bulletin Blogs.md');
+  const mdPath = path.join(repoRoot, 'Nation Bulletin Blogs Full.md');
   if (!fs.existsSync(mdPath)) {
     throw new Error(`Missing source file: ${mdPath}`);
   }
@@ -40,25 +31,9 @@ export async function loadMarkdownAndImages(repoRoot: string): Promise<{
   const rl = readline.createInterface({ input, crlfDelay: Infinity });
   const textLines: string[] = [];
   const imageBuffers = new Map<number, Buffer>();
-  let inImages = false;
 
   for await (const line of rl) {
-    if (!inImages && line.startsWith('[image1]:')) {
-      inImages = true;
-    }
-    if (inImages) {
-      const m = line.match(/^\[image(\d+)\]:\s*<data:image\/png;base64,(.+)>$/);
-      if (m) {
-        const idx = Number(m[1]);
-        try {
-          imageBuffers.set(idx, Buffer.from(m[2], 'base64'));
-        } catch {
-          console.warn(`Failed to decode image${idx}`);
-        }
-      }
-    } else {
-      textLines.push(line);
-    }
+    textLines.push(line);
   }
 
   return { textPart: textLines.join('\n'), imageBuffers };
@@ -71,126 +46,52 @@ function blogRegionOnly(textPart: string): string {
 
 function isSeparatorLine(trimmed: string): boolean {
   if (!trimmed) return false;
-  const t = trimmed.replace(/^\\+/, '');
-  return /^=+$/.test(t);
+  return /^=+$/.test(trimmed);
 }
 
 export function parseArticles(textPart: string): ParsedArticle[] {
-  const region = blogRegionOnly(textPart);
-  const lines = region.split('\n');
-  let category = 'finance';
+  // Use separators to split articles
+  const sections = textPart.split('================================================================================');
   const articles: ParsedArticle[] = [];
+  let imageCount = 1;
 
-  let pending: {
-    title: string;
-    imageIndex: number;
-    categorySlug: string;
-  } | null = null;
-  const bodyLines: string[] = [];
+  for (const section of sections) {
+    const lines = section.trim().split('\n');
+    if (lines.length < 3) continue;
 
-  const flush = () => {
-    if (!pending) return;
-    const bodyMarkdown = stripTrailingStaticSections(bodyLines.join('\n').trim());
-    bodyLines.length = 0;
+    // Header 0: # Category
+    const catMatch = lines[0].match(/^#\s+(.+)$/);
+    if (!catMatch) continue;
+    
+    let rawCat = catMatch[1].trim().toLowerCase();
+    
+    // Skip legal pages in the blog parser
+    if (['privacy policy', 'terms & condition', 'content policy'].includes(rawCat)) continue;
 
-    // Special case: Split "Top 10 Places to Visit in India" into 10 articles
-    if (pending.title.toLowerCase().includes('top 10 places to visit in india')) {
-      console.log('Splitting Travel article:', pending.title);
-      // Split by ## **1\. Title** - more robust regex
-      const sections = bodyMarkdown.split(/\n##\s+\*\*\d+[\.\\\s]+/);
-      console.log('Found sections:', sections.length);
-      // First section is intro
-      const intro = sections[0].trim();
-      let travelImageCounter = 0;
+    let categorySlug = rawCat;
+    if (rawCat === 'finance') categorySlug = 'business';
+    else if (rawCat === 'tech') categorySlug = 'technology';
 
-      for (let s = 1; s < sections.length; s++) {
-        const sectionContent = sections[s].trim();
-        // The first line of sectionContent is " Jaipur – The Royal Pink City**"
-        const titleMatch = sectionContent.match(/^\*\*(.+?)\*\*/);
-        if (!titleMatch) {
-            // Fallback if title regex fails but section was found
-            const firstLine = sectionContent.split('\n')[0].replace(/\*\*/g, '').trim();
-            articles.push({
-                categorySlug: 'travel',
-                title: firstLine,
-                slug: slugify(firstLine),
-                imageIndex: 11 + travelImageCounter,
-                bodyMarkdown: sectionContent,
-            });
-            travelImageCounter++;
-            continue;
-        }
-        
-        if (titleMatch) {
-          const placeTitle = titleMatch[1].replace(/^[ \d.]*/, '').replace(/^\\/, '').trim();
-          const placeBody = sectionContent.replace(/^\*\*.+?\*\*/, '').trim();
-          
-          articles.push({
-            categorySlug: 'travel',
-            title: placeTitle,
-            slug: slugify(placeTitle),
-            // First travel article keeps image11, others use 12-20
-            imageIndex: travelImageCounter === 0 ? 11 : 11 + travelImageCounter,
-            bodyMarkdown: travelImageCounter === 0 ? `${intro}\n\n${placeBody}` : placeBody,
-          });
-          travelImageCounter++;
-        }
-      }
-    } else {
-      articles.push({
-        categorySlug: pending.categorySlug,
-        title: pending.title,
-        slug: slugify(pending.title),
-        imageIndex: pending.imageIndex,
-        bodyMarkdown,
-      });
-    }
-    pending = null;
-  };
+    // Header 1: **Title**
+    const titleMatch = lines[2].match(/^\*\*(.+)\*\*$/);
+    if (!titleMatch) continue;
+    const title = titleMatch[1].trim();
 
-  for (let i = 0; i < lines.length; i++) {
-    const raw = lines[i];
-    const trimmed = raw.trim();
+    // The rest is body
+    const bodyMarkdown = lines.slice(3).join('\n').trim();
 
-    if (isSeparatorLine(trimmed)) {
-      continue;
-    }
-
-    const catOnly = trimmed.match(/^# (Finance|Tech|Health|Home|Education|Travel)\s*$/);
-    if (catOnly) {
-      category = catOnly[1].toLowerCase();
-      continue;
-    }
-
-    if (/^#\s+\*\*/.test(raw)) {
-      flush();
-      const { title, inlineImage } = parseTitleLine(raw);
-      let imageIndex = inlineImage ?? articles.length + 1;
-      let j = i + 1;
-      while (j < lines.length && !lines[j].trim()) j++;
-      const nextTrim = lines[j]?.trim() ?? '';
-      const standaloneImg = nextTrim.match(/^!?\[\]\[image(\d+)\]\s*$/);
-      if (standaloneImg) {
-        if (inlineImage == null) imageIndex = Number(standaloneImg[1]);
-        j++;
-      }
-      pending = {
-        title,
-        imageIndex,
-        categorySlug: category,
-      };
-      i = j - 1;
-      continue;
-    }
-
-    if (pending) bodyLines.push(raw);
+    articles.push({
+      categorySlug,
+      title,
+      slug: slugify(title),
+      imageIndex: imageCount++,
+      bodyMarkdown,
+    });
   }
 
-  flush();
   return articles;
 }
 
-/** Travel article shares one chunk with legal pages (no ==== before Write for us). */
 function stripTrailingStaticSections(md: string): string {
   const markers = [
     '\n# Write for us Content',

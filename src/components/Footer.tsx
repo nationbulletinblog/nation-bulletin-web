@@ -31,8 +31,8 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
           {/* Column 1: Brand Info & Paid Opportunity */}
           <div className="space-y-8">
-            <Link href="/" className="inline-block bg-white p-4 rounded-xl shadow-2xl">
-               <Image src="/logo.png" alt="Nation Bulletin Logo" width={280} height={90} className="object-contain" />
+            <Link href="/" className="inline-block transition-opacity hover:opacity-80">
+               <Image src="/logo_footer.png" alt="Nation Bulletin Logo" width={200} height={60} className="object-contain" />
             </Link>
             <p className="text-xs leading-relaxed font-medium">
               NationBulletin is a free blogging platform where writers, businesses, and creators can publish high-quality content, share insights, and gain online visibility. Join us to grow your authority, reach a wider audience, and build strong SEO presence.

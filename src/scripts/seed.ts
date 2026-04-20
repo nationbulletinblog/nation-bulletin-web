@@ -89,8 +89,8 @@ async function uploadImageBuffer(buf: Buffer, filename: string): Promise<string 
 }
 
 async function seed() {
-  console.log('Loading Nation Bulletin Blogs.md …');
-  const { textPart, imageBuffers } = await loadMarkdownAndImages(repoRoot);
+  console.log('Loading Nation Bulletin Blogs Full.md …');
+  const { textPart } = await loadMarkdownAndImages(repoRoot);
 
   console.log('Removing existing posts, static pages, tags, and categories …');
   await wipeSeededContent();
@@ -142,44 +142,35 @@ async function seed() {
   }
 
   const imageAssetIds: Record<number, string> = {};
-  for (let n = 1; n <= 11; n++) {
-    const buf = imageBuffers.get(n);
-    if (!buf) {
-      console.warn(`No embedded image${n} in markdown`);
-      continue;
+  const mediaDir = join(__dirname, 'assets', 'seed', 'media');
+  
+  console.log('Uploading images from Docx …');
+  for (let n = 1; n <= 19; n++) {
+    // Try .png then .jpg
+    let buf: Buffer | null = null;
+    let ext = 'png';
+    let p = join(mediaDir, `image${n}.png`);
+    if (!fs.existsSync(p)) {
+      p = join(mediaDir, `image${n}.jpg`);
+      ext = 'jpg';
     }
-    const id = await uploadImageBuffer(buf, `nation-bulletin-image-${n}.png`);
-    if (id) imageAssetIds[n] = id;
-  }
 
-  // Upload generated travel images (12-20)
-  const travelAssets: Record<number, string> = {
-    12: 'kerala.png',
-    13: 'ladakh.png',
-    14: 'varanasi.png',
-    15: 'goa.png',
-    16: 'rishikesh.png',
-    17: 'agra.png',
-    18: 'andaman.png',
-    19: 'udaipur.png',
-    20: 'meghalaya.png',
-  };
-
-  for (const [idx, filename] of Object.entries(travelAssets)) {
-    const localPath = join(__dirname, 'assets', 'seed', filename);
-    if (fs.existsSync(localPath)) {
-      const buf = fs.readFileSync(localPath);
-      const id = await uploadImageBuffer(buf, `generated-${filename}`);
-      if (id) imageAssetIds[Number(idx)] = id;
+    if (fs.existsSync(p)) {
+      buf = fs.readFileSync(p);
+      const id = await uploadImageBuffer(buf, `image${n}.${ext}`);
+      if (id) {
+        imageAssetIds[n] = id;
+        process.stdout.write('.');
+      }
     } else {
-      console.warn(`Missing local asset: ${localPath}`);
+      console.warn(`\nMissing image${n}`);
     }
   }
+  console.log('\nImages uploaded.');
 
   const imageRefs: ImageRefMap = {};
-  for (let n = 1; n <= 20; n++) {
-    const ref = imageAssetIds[n];
-    if (ref) imageRefs[`image${n}`] = { _type: 'reference', _ref: ref };
+  for (const [n, ref] of Object.entries(imageAssetIds)) {
+    imageRefs[`image${n}`] = { _type: 'reference', _ref: ref };
   }
 
   const articles = parseArticles(textPart);
@@ -209,7 +200,7 @@ async function seed() {
         : undefined,
       categories: [{ _type: 'reference', _ref: catId, _key: `c-${pid}` }],
       tags: [
-        { _type: 'reference', _ref: tagRefs[a.categorySlug], _key: `t1-${pid}` },
+        { _type: 'reference', _ref: tagRefs[a.categorySlug] || tagRefs['nation-bulletin'], _key: `t1-${pid}` },
         { _type: 'reference', _ref: tagRefs['nation-bulletin'], _key: `t2-${pid}` },
       ],
       publishedAt: new Date(Date.now() - publishedOffset * 86400000).toISOString(),

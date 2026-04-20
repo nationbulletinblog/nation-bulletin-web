@@ -23,42 +23,42 @@ const components: PortableTextComponents = {
   },
   block: {
     h2: ({ children }) => (
-      <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter leading-tight mt-16 mb-8 text-foreground">
+      <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight leading-tight mt-12 mb-6 text-foreground">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="text-xl md:text-3xl font-black uppercase tracking-tight mt-12 mb-6 text-foreground">
+      <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight mt-10 mb-5 text-foreground">
         {children}
       </h3>
     ),
     h4: ({ children }) => (
-      <h4 className="text-lg md:text-xl font-black uppercase tracking-widest mt-10 mb-4 text-primary bg-muted inline-block px-2">
+      <h4 className="text-lg md:text-xl font-black uppercase tracking-widest mt-8 mb-4 text-primary bg-muted inline-block px-2">
         {children}
       </h4>
     ),
     normal: ({ children }) => (
-      <p className="text-lg leading-relaxed text-zinc-600 mb-8 font-medium">
+      <p className="text-base md:text-[17px] leading-relaxed text-zinc-700 mb-6 font-medium">
         {children}
       </p>
     ),
   },
   list: {
     bullet: ({ children }) => (
-      <ul className="mt-8 mb-8 space-y-4 list-none text-lg">
+      <ul className="mt-6 mb-6 space-y-3 list-none text-base md:text-[17px]">
         {children}
       </ul>
     ),
     number: ({ children }) => (
-      <ol className="mt-8 mb-8 space-y-4 list-decimal list-inside text-lg font-bold text-foreground">
+      <ol className="mt-6 mb-6 space-y-3 list-decimal list-inside text-base md:text-[17px] font-bold text-foreground">
         {children}
       </ol>
     ),
   },
   listItem: {
     bullet: ({ children }) => (
-      <li className="flex items-start gap-4 text-zinc-600">
-        <span className="mt-1.5 w-2 h-2 bg-primary flex-shrink-0" />
+      <li className="flex items-start gap-4 text-zinc-700">
+        <span className="mt-2 w-1.5 h-1.5 bg-primary flex-shrink-0" />
         <span>{children}</span>
       </li>
     ),
