@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { registerUser } from '../actions/register'
+import { User, Mail, Lock, ArrowRight, UserPlus, ShieldCheck } from 'lucide-react'
 
 export default function RegisterPage() {
   const [name, setName] = useState('')
@@ -40,93 +41,129 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-24 relative overflow-hidden">
-      {/* Editorial Decorative Elements */}
-      <div className="absolute top-0 right-0 w-full h-2 bg-primary"></div>
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-secondary/5 rounded-full blur-3xl"></div>
+    <div className="min-h-screen flex items-center justify-center bg-[#F9F9F9] px-4 py-8 relative overflow-hidden font-sans">
+      {/* Dynamic Background Elements */}
+      <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-secondary via-primary to-secondary/40"></div>
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px] animate-pulse"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/5 rounded-full blur-[120px] animate-pulse delay-1000"></div>
 
-      <div className="max-w-md w-full space-y-12 bg-white p-12 md:p-16 border-2 border-primary shadow-[20px_20px_0px_0px_rgba(145,10,10,0.1)] relative z-10">
-        <div className="text-center">
-          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4 block">Contributor Program</span>
-          <h2 className="text-5xl font-black tracking-tighter uppercase italic leading-none">
-            Join Us<span className="text-primary">.</span>
-          </h2>
-          <p className="mt-6 text-[10px] font-black uppercase tracking-widest text-zinc-400 leading-relaxed">
-            Create your press profile and start shaping the narrative today.
-          </p>
+      <div className="max-w-[520px] w-full bg-white rounded-2xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.08)] border border-zinc-100 relative z-10 overflow-hidden">
+        {/* Top Accents */}
+        <div className="h-1.5 w-full bg-secondary/10 flex">
+           <div className="h-full w-1/3 bg-secondary"></div>
         </div>
 
-        <form className="mt-12 space-y-8" onSubmit={handleSubmit}>
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 border-l-4 border-primary pl-3">Full Identity</label>
-              <input
-                type="text"
-                required
-                className="w-full px-5 py-4 bg-muted border border-border focus:border-primary focus:outline-none text-xs font-black uppercase tracking-widest transition-all"
-                placeholder="FIRST LAST"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+        <div className="p-6 md:p-8">
+          {/* Header */}
+          <div className="mb-6 text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-zinc-50 rounded-xl mb-4 shadow-inner text-secondary">
+               <UserPlus className="w-6 h-6" />
             </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 border-l-4 border-primary pl-3">Email Channel</label>
-              <input
-                type="email"
-                required
-                className="w-full px-5 py-4 bg-muted border border-border focus:border-primary focus:outline-none text-xs font-black uppercase tracking-widest transition-all"
-                placeholder="YOUR@SECUREMAIL.COM"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 border-l-4 border-primary pl-3">Security Key</label>
-              <input
-                type="password"
-                required
-                className="w-full px-5 py-4 bg-muted border border-border focus:border-primary focus:outline-none text-xs font-black uppercase tracking-widest transition-all"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+            <h2 className="text-2xl font-black tracking-tight text-zinc-900 mb-1">Create Account</h2>
+            <p className="text-xs font-medium text-zinc-500 max-w-[320px] mx-auto">
+               Join the Nation Bulletin community today.
+            </p>
           </div>
 
-          {error && (
-            <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-[10px] font-black uppercase tracking-widest">
-              Validation Protocol Failed: {error}
-            </div>
-          )}
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Full Name</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <User className="h-4 w-4 text-zinc-400 group-focus-within:text-secondary transition-colors" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    className="w-full pl-11 pr-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl focus:bg-white focus:border-secondary focus:ring-4 focus:ring-secondary/5 outline-none text-sm transition-all duration-300 placeholder:text-zinc-300"
+                    placeholder="John Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+              </div>
 
-          {success && (
-            <div className="p-4 bg-green-50 border-l-4 border-green-500 text-green-700 text-[10px] font-black uppercase tracking-widest">
-              Protocol Accepted: {success}
-            </div>
-          )}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Email Address</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Mail className="h-4 w-4 text-zinc-400 group-focus-within:text-secondary transition-colors" />
+                  </div>
+                  <input
+                    type="email"
+                    required
+                    className="w-full pl-11 pr-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl focus:bg-white focus:border-secondary focus:ring-4 focus:ring-secondary/5 outline-none text-sm transition-all duration-300 placeholder:text-zinc-300"
+                    placeholder="name@company.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
 
-          <div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Password</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Lock className="h-4 w-4 text-zinc-400 group-focus-within:text-secondary transition-colors" />
+                  </div>
+                  <input
+                    type="password"
+                    required
+                    className="w-full pl-11 pr-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl focus:bg-white focus:border-secondary focus:ring-4 focus:ring-secondary/5 outline-none text-sm transition-all duration-300 placeholder:text-zinc-300"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <div className="p-4 bg-red-50/50 rounded-xl border border-red-100 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="w-1.5 h-8 bg-red-500 rounded-full"></div>
+                <p className="text-xs font-semibold text-red-600 leading-tight">{error}</p>
+              </div>
+            )}
+
+            {success && (
+              <div className="p-4 bg-green-50/50 rounded-xl border border-green-100 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="w-1.5 h-8 bg-green-500 rounded-full"></div>
+                <p className="text-xs font-semibold text-green-600 leading-tight">{success}</p>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
-              className={`group relative w-full flex justify-center py-5 px-4 text-xs font-black uppercase tracking-[0.3em] transition-all transform active:scale-95 ${
-                loading ? 'bg-zinc-300 text-zinc-500 cursor-wait' : 'bg-primary text-white hover:bg-zinc-900 shadow-xl shadow-primary/10'
-              }`}
+              className={`group relative w-full flex items-center justify-center gap-3 bg-zinc-900 text-white rounded-xl text-sm font-bold tracking-wide transition-all shadow-xl hover:shadow-zinc-900/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait py-3.5`}
             >
-              {loading ? 'Processing Registry...' : 'Initiate Registration'}
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  <span>Create Account</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </button>
-          </div>
 
-          <div className="text-center pt-8 border-t border-border mt-12">
-            <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
-              Already Registered?{' '}
-              <Link href="/login" className="text-primary font-black hover:underline hover:decoration-2 underline-offset-4">
-                Sign In
-              </Link>
-            </p>
-          </div>
-        </form>
+            <div className="text-center">
+              <p className="text-[13px] font-medium text-zinc-500">
+                Found your way back?{' '}
+                <Link href="/login" className="text-secondary font-bold hover:text-zinc-900 transition-colors">
+                  Sign In
+                </Link>
+              </p>
+            </div>
+          </form>
+        </div>
+        
+        {/* Footer Info */}
+        <div className="bg-zinc-50/50 p-6 border-t border-zinc-100 flex items-center justify-center gap-2">
+           <ShieldCheck className="w-3 h-3 text-zinc-400" />
+           <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Secure Registration Protocol</span>
+        </div>
       </div>
     </div>
   )
