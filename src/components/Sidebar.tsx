@@ -11,11 +11,6 @@ async function getSidebarData() {
     "count": count(*[_type == "post" && references(^._id)])
   }`;
   
-  const tagsQuery = `*[_type == "tag"][0...15] {
-    title,
-    "slug": slug.current
-  }`;
-
   const popularPostsQuery = `*[_type == "post"] | order(publishedAt desc)[0...3] {
     _id,
     title,
@@ -23,17 +18,16 @@ async function getSidebarData() {
     categories[0]->{ title, "slug": slug.current }
   }`;
 
-  const [categories, tags, popularPosts] = await Promise.all([
+  const [categories, popularPosts] = await Promise.all([
     client.fetch(categoriesQuery),
-    client.fetch(tagsQuery),
     client.fetch(popularPostsQuery)
   ]);
 
-  return { categories, tags, popularPosts };
+  return { categories, popularPosts };
 }
 
 export const Sidebar = async () => {
-  const { categories, tags, popularPosts } = await getSidebarData();
+  const { categories, popularPosts } = await getSidebarData();
 
   return (
     <aside className="space-y-12">
@@ -77,22 +71,7 @@ export const Sidebar = async () => {
           ))}
         </div>
       </section>
-
-      {/* Popular Tags - Now Last */}
-      <section>
-        <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-8 border-b border-border pb-4">Popular Tags</h3>
-        <div className="flex flex-wrap gap-2">
-           {tags.map((tag: any) => (
-             <Link 
-               key={tag.slug} 
-               href={`/tag/${tag.slug}`}
-               className="px-3 py-1.5 bg-muted text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:bg-primary hover:text-white transition-all border border-transparent hover:border-primary/20"
-             >
-               #{tag.title}
-             </Link>
-           ))}
-        </div>
-      </section>
     </aside>
+
   )
 }
