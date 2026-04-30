@@ -128,7 +128,7 @@ export default function ProfilePage() {
               <h2 className="text-2xl font-black uppercase tracking-tighter">Draft New Article</h2>
               <button onClick={() => setIsWritingArticle(false)} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-primary transition-colors">Cancel</button>
             </div>
-            <SubmissionForm session={session} />
+            {session && <SubmissionForm session={session} />}
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-1 px-1 bg-border border border-border">
