@@ -35,16 +35,6 @@ export const Footer = () => {
             <p className="text-[13px] leading-relaxed font-medium !text-white">
               NationBulletin is a free blogging platform where writers, businesses, and creators can publish high-quality content, share insights, and gain online visibility. Join us to grow your authority, reach a wider audience, and build strong SEO presence.
             </p>
-            <div className="p-5 bg-zinc-800/50 border border-zinc-700 rounded-lg space-y-3">
-               <h5 className="text-[10px] font-black uppercase tracking-widest text-primary italic underline underline-offset-4">Paid Content Opportunity</h5>
-               <p className="text-[11px] leading-relaxed !text-white">
-                  SEO-friendly guest posts, Do-follow backlinks, Brand promotion to a targeted audience, Fast approval and permanent placement.
-               </p>
-               <div className="flex items-center gap-2 text-[11px] font-bold text-white mt-4">
-                  <Mail className="w-3.5 h-3.5 text-primary" />
-                  <span>xyz@email.com</span>
-               </div>
-            </div>
           </div>
 
           {/* Column 2: Categories */}
@@ -78,12 +68,18 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 4: About Us */}
+          {/* Column 4: Paid Opportunity */}
           <div className="border-l border-zinc-800 md:pl-12">
-            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8">About Us</h4>
-            <p className="text-[13px] leading-relaxed font-medium !text-white">
-              NationBulletin is a free blogging platform where writers, businesses, and creators can publish high-quality content, share insights, and gain online visibility. Join us to grow your authority, reach a wider audience, and build strong SEO presence.
-            </p>
+            <div className="p-5 bg-zinc-800/50 border border-zinc-700 rounded-lg space-y-3">
+               <h5 className="text-[10px] font-black uppercase tracking-widest text-primary italic underline underline-offset-4">Paid Content Opportunity</h5>
+               <p className="text-[11px] leading-relaxed !text-white">
+                  SEO-friendly guest posts, Do-follow backlinks, Brand promotion to a targeted audience, Fast approval and permanent placement.
+               </p>
+               <div className="flex items-center gap-2 text-[11px] font-bold text-white mt-4">
+                  <Mail className="w-3.5 h-3.5 text-primary" />
+                  <span>xyz@email.com</span>
+               </div>
+            </div>
           </div>
         </div>
 
