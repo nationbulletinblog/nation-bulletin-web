@@ -32,12 +32,12 @@ export const Footer = () => {
             <Link href="/" className="inline-block transition-opacity hover:opacity-80">
                <Image src="/logo_footer.png" alt="Nation Bulletin Logo" width={200} height={60} className="object-contain" />
             </Link>
-            <p className="text-[13px] leading-relaxed font-medium text-zinc-400">
+            <p className="text-[13px] leading-relaxed font-medium !text-white">
               NationBulletin is a free blogging platform where writers, businesses, and creators can publish high-quality content, share insights, and gain online visibility. Join us to grow your authority, reach a wider audience, and build strong SEO presence.
             </p>
             <div className="p-5 bg-zinc-800/50 border border-zinc-700 rounded-lg space-y-3">
                <h5 className="text-[10px] font-black uppercase tracking-widest text-primary italic underline underline-offset-4">Paid Content Opportunity</h5>
-               <p className="text-[11px] leading-relaxed text-white">
+               <p className="text-[11px] leading-relaxed !text-white">
                   SEO-friendly guest posts, Do-follow backlinks, Brand promotion to a targeted audience, Fast approval and permanent placement.
                </p>
                <div className="flex items-center gap-2 text-[11px] font-bold text-white mt-4">
@@ -81,7 +81,7 @@ export const Footer = () => {
           {/* Column 4: About Us */}
           <div className="border-l border-zinc-800 md:pl-12">
             <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8">About Us</h4>
-            <p className="text-[13px] leading-relaxed font-medium text-zinc-400">
+            <p className="text-[13px] leading-relaxed font-medium !text-white">
               NationBulletin is a free blogging platform where writers, businesses, and creators can publish high-quality content, share insights, and gain online visibility. Join us to grow your authority, reach a wider audience, and build strong SEO presence.
             </p>
           </div>

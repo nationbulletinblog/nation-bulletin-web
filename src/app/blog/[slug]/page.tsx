@@ -92,9 +92,9 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
       </header>
 
       <div className="container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-16">
           {/* Main Content Area */}
-          <div className="lg:w-2/3">
+          <div className="lg:w-3/4">
              {/* Main Image */}
              {post.mainImage && (
                <div className="aspect-[21/9] bg-zinc-800 mb-8 relative overflow-hidden group">
@@ -132,7 +132,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
           </div>
 
           {/* Sidebar Area */}
-          <div className="lg:w-1/3">
+          <div className="lg:w-1/4">
              <div className="sticky top-24">
                 <Sidebar />
              </div>

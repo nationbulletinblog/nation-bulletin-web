@@ -60,8 +60,8 @@ export default async function BlogArchive() {
 
         <div className="flex flex-col lg:flex-row gap-16">
           {/* Main Grid Feed */}
-          <div className="lg:w-2/3">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="lg:w-3/4">
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {posts.map((post: any) => (
                    <PostCard key={post._id} post={post} />
                 ))}
@@ -92,7 +92,7 @@ export default async function BlogArchive() {
           </div>
 
           {/* Sidebar Area */}
-          <div className="lg:w-1/3">
+          <div className="lg:w-1/4">
              <div className="sticky top-32">
                 <Sidebar />
              </div>
