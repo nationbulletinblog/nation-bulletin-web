@@ -76,7 +76,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                 </div>
                 <div>
                    <p className="text-[8px] font-black uppercase tracking-widest text-zinc-400">Written By</p>
-                   <p className="text-[10px] font-black uppercase tracking-tighter text-foreground">{post.author?.name || 'Anonymous'}</p>
+                   <p className="text-[10px] font-black uppercase tracking-tighter text-foreground">Admin</p>
                 </div>
              </div>
              

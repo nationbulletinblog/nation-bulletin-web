@@ -85,7 +85,21 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
   const onSubmit = async (data: BlogSubmission) => {
     setStatus({ type: 'loading', message: 'Preparing your article for review...' })
     
-    const result = await submitBlogPost(data)
+    const formData = new FormData()
+    formData.append('title', data.title)
+    formData.append('content', data.content)
+    formData.append('authorName', data.authorName)
+    formData.append('authorEmail', data.authorEmail)
+    formData.append('category', data.category)
+    if (data.seoTitle) formData.append('seoTitle', data.seoTitle)
+    if (data.seoDescription) formData.append('seoDescription', data.seoDescription)
+    data.tags.forEach(tag => formData.append('tags', tag))
+    
+    if (data.mainImage) {
+      formData.append('mainImage', data.mainImage as Blob)
+    }
+
+    const result = await submitBlogPost(formData as any)
 
     if (result.success) {
       setStatus({ type: 'success', message: 'Thank you! Your article has been received. Our editorial team will review it shortly.' })
@@ -333,7 +347,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
           </button>
         </div>
 
-        {status.type !== 'idle' && (
+        {(status.type === 'success' || status.type === 'error') && (
           <div
             className={`mt-8 p-6 rounded-2xl flex items-start gap-4 animate-in fade-in slide-in-from-top-4 duration-500 border ${
               status.type === 'success' ? 'bg-green-50/50 border-green-100 text-green-800' : 'bg-red-50/50 border-red-100 text-red-800'

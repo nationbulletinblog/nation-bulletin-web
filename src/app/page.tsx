@@ -58,7 +58,7 @@ export default async function Home() {
                   </div>
                   <div className="absolute bottom-12 left-12 right-12 z-20">
                     <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-300 mb-6">
-                      <span className="flex items-center gap-2"><User className="w-4 h-4 text-primary" /> {featuredPost.author?.name}</span>
+                      <span className="flex items-center gap-2"><User className="w-4 h-4 text-primary" /> Admin</span>
                       <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> {new Date(featuredPost.publishedAt).toLocaleDateString()}</span>
                       <span className="flex items-center gap-2 font-bold text-white italic underline underline-offset-4 decoration-primary decoration-2">
                         {featuredPost.categories?.[0]?.title}

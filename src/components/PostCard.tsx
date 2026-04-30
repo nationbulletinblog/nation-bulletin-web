@@ -20,7 +20,7 @@ interface PostCardProps {
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const category = post.categories?.[0]?.title || 'General'
-  const authorName = post.author?.name || 'Anonymous'
+  const authorName = 'Admin'
   const date = new Date(post.publishedAt).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
