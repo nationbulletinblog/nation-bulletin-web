@@ -52,6 +52,8 @@ export async function submitBlogPost(data: BlogSubmission) {
         name: validatedData.authorName,
         email: validatedData.authorEmail,
       },
+      seoTitle: validatedData.seoTitle,
+      seoDescription: validatedData.seoDescription,
     }
 
     // Use drafts. prefix to ensure it doesn't appear on the site until published

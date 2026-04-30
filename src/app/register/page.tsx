@@ -13,13 +13,34 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [captchaParams, setCaptchaParams] = useState({ a: 0, b: 0 })
+  const [captchaAnswer, setCaptchaAnswer] = useState('')
   const router = useRouter()
+
+  React.useEffect(() => {
+    generateCaptcha()
+  }, [])
+
+  const generateCaptcha = () => {
+    setCaptchaParams({
+      a: Math.floor(Math.random() * 10) + 1,
+      b: Math.floor(Math.random() * 10) + 1
+    })
+    setCaptchaAnswer('')
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
     setSuccess('')
+
+    if (parseInt(captchaAnswer) !== captchaParams.a + captchaParams.b) {
+      setError('Incorrect security question answer.')
+      setLoading(false)
+      generateCaptcha()
+      return
+    }
 
     const formData = new FormData()
     formData.append('name', name)
@@ -116,6 +137,20 @@ export default function RegisterPage() {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">
+                  Security Check: What is {captchaParams.a} + {captchaParams.b}?
+                </label>
+                <input
+                  type="number"
+                  required
+                  className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl focus:bg-white focus:border-secondary focus:ring-4 focus:ring-secondary/5 outline-none text-sm transition-all duration-300"
+                  placeholder="Your Answer"
+                  value={captchaAnswer}
+                  onChange={(e) => setCaptchaAnswer(e.target.value)}
+                />
               </div>
             </div>
 

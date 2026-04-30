@@ -8,6 +8,8 @@ export const blogSubmissionSchema = z.object({
   category: z.string().min(1, 'Category is required'),
   tags: z.array(z.string()).min(1, 'At least one tag is required'),
   mainImage: z.any().optional(),
+  seoTitle: z.string().optional(),
+  seoDescription: z.string().optional(),
 })
 
 export type BlogSubmission = z.infer<typeof blogSubmissionSchema>

@@ -94,10 +94,6 @@ export const Header = () => {
                       </button>
                    )}
                 </div>
-                <Link href="/write-for-us" className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-primary transition-colors">
-                   <Edit3 className="w-4 h-4" />
-                   <span className="hidden xl:inline">Write for Us</span>
-                </Link>
              </div>
 
              {/* Auth Section */}

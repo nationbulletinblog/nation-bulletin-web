@@ -122,47 +122,13 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                 {/* Article Tags */}
                 <div className="mt-8 pt-8 border-t border-border flex flex-wrap gap-2">
                    {post.tags?.map((tag: any) => (
-                      <Link href={`/tag/${tag.slug}`} key={tag.slug} className="px-3 py-1.5 bg-muted text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:bg-primary hover:text-white transition-all cursor-pointer">
+                      <span key={tag.slug} className="px-3 py-1.5 bg-muted text-[9px] font-black uppercase tracking-widest text-zinc-500 transition-all cursor-default">
                          #{tag.title}
-                      </Link>
+                      </span>
                    ))}
                 </div>
-
-                {/* Article Footer Interface */}
-                <div className="mt-8 p-6 bg-muted border border-border flex flex-col md:flex-row items-center justify-between gap-6">
-                   <div className="flex items-center gap-4">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Share Briefing</span>
-                      <div className="flex items-center gap-2">
-                         <button className="p-2 bg-white border border-border hover:text-primary transition-colors"><Send className="w-4 h-4" /></button>
-                         <button className="p-2 bg-white border border-border hover:text-primary transition-colors"><Globe className="w-4 h-4" /></button>
-                         <button className="p-2 bg-white border border-border hover:text-primary transition-colors"><Share2 className="w-4 h-4" /></button>
-                      </div>
-                   </div>
-                   <button className="flex items-center gap-2 px-6 py-3 bg-secondary text-white text-[9px] font-black uppercase tracking-widest hover:bg-primary transition-all">
-                      <Bookmark className="w-3 h-3" /> Save Article
-                   </button>
-                </div>
-
-                {/* Author Card Footer */}
-                {post.author && (
-                  <div className="mt-8 pt-8 border-t border-border flex gap-8">
-                    <div className="w-20 h-20 bg-muted border border-border flex-shrink-0 relative overflow-hidden">
-                       {post.author.image && (
-                         <Image src={urlFor(post.author.image).url()} alt={post.author.name} fill className="object-cover" />
-                       )}
-                    </div>
-                    <div>
-                        <h4 className="text-lg font-black uppercase tracking-widest mb-2">About {post.author.name}</h4>
-                        <div className="text-xs font-medium text-zinc-500 leading-relaxed mb-4">
-                           <PortableText value={post.author.bio} />
-                        </div>
-                        <Link href="/profile" className="text-[9px] font-black uppercase tracking-widest text-primary flex items-center gap-2 group">
-                           View Author <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                    </div>
-                  </div>
-                )}
              </div>
+
           </div>
 
           {/* Sidebar Area */}

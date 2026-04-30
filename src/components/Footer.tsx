@@ -4,12 +4,10 @@ import Image from 'next/image'
 import { ShieldCheck, Globe, Send, Share2, Mail, Users, Video } from 'lucide-react'
 
 export const Footer = () => {
-  const tags = [
-    'Agarwal Packers', 'Artificial Intelligence', 'Business', 'Custom Boxes',
-    'Custom Printed Boxes', 'Digital Marketing', 'Education', 'Food',
-    'Health', 'Home', 'Home Improvement', 'Mobile App Development',
-    'Packaging', 'Packers And Movers', 'SEO', 'SEO Services',
-    'Social Media', 'Technology', 'Travel', 'Web Design'
+  const categories = [
+    'Business', 'Health', 'Services', 'Education', 
+    'Technology', 'Shopping', 'Home', 'General', 
+    'SEO', 'Travel'
   ]
 
   const sponsorLinks = [
@@ -39,7 +37,7 @@ export const Footer = () => {
             </p>
             <div className="p-5 bg-zinc-800/50 border border-zinc-700 rounded-lg space-y-3">
                <h5 className="text-[10px] font-black uppercase tracking-widest text-primary italic underline underline-offset-4">Paid Content Opportunity</h5>
-               <p className="text-[11px] leading-relaxed text-zinc-300">
+               <p className="text-[11px] leading-relaxed text-white">
                   SEO-friendly guest posts, Do-follow backlinks, Brand promotion to a targeted audience, Fast approval and permanent placement.
                </p>
                <div className="flex items-center gap-2 text-[11px] font-bold text-white mt-4">
@@ -49,17 +47,17 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Column 2: Tags */}
+          {/* Column 2: Categories */}
           <div className="border-l border-zinc-800 md:pl-12">
-            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8">Tags</h4>
+            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8">Categories</h4>
             <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
+              {categories.map((category) => (
                 <Link 
-                  key={tag} 
-                  href={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                  key={category} 
+                  href={`/category/${category.toLowerCase().replace(/\s+/g, '-')}`}
                   className="px-3 py-1.5 bg-zinc-800 text-[10px] font-bold uppercase tracking-wider text-zinc-200 hover:bg-primary hover:text-white transition-all border border-zinc-700"
                 >
-                  {tag}
+                  {category}
                 </Link>
               ))}
             </div>
@@ -80,23 +78,12 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 4: Website Status & Social */}
-          <div className="border-l border-zinc-800 md:pl-12 flex flex-col items-center text-center">
-            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8 w-full text-left">Website Status</h4>
-            <div className="relative w-full aspect-square max-w-[200px] flex flex-col items-center justify-center p-6 bg-zinc-900 rounded-full border-4 border-primary/20 shadow-2xl">
-               {/* Decorative Ring */}
-               <div className="absolute inset-0 border-[8px] border-zinc-800 rounded-full" />
-               <div className="relative z-10 space-y-2">
-                  <div className="text-[10px] font-black text-zinc-500 uppercase">Nation Authority</div>
-                  <div className="flex items-center justify-center gap-4 text-white text-[13px] font-black">
-                     <div>DA - <span className="text-primary">37</span></div>
-                     <div>PA - <span className="text-primary">46</span></div>
-                  </div>
-                  <div className="h-px bg-zinc-800 w-12 mx-auto my-2" />
-                  <div className="text-[10px] font-bold text-zinc-300">ALEXA: 34,297</div>
-                  <div className="text-[10px] font-bold text-zinc-300">COUNTRY: 4,366</div>
-               </div>
-            </div>
+          {/* Column 4: About Us */}
+          <div className="border-l border-zinc-800 md:pl-12">
+            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8">About Us</h4>
+            <p className="text-[13px] leading-relaxed font-medium text-zinc-400">
+              NationBulletin is a free blogging platform where writers, businesses, and creators can publish high-quality content, share insights, and gain online visibility. Join us to grow your authority, reach a wider audience, and build strong SEO presence.
+            </p>
           </div>
         </div>
 
@@ -107,6 +94,7 @@ export const Footer = () => {
                 <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
                 <Link href="/terms" className="hover:text-white transition-colors">Terms & Condition</Link>
                 <Link href="/content-policy" className="hover:text-white transition-colors">Content Policy</Link>
+                <Link href="/write-for-us" className="hover:text-white transition-colors text-primary">Write For Us</Link>
               </div>
               
               <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">

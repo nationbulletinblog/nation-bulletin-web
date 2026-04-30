@@ -8,10 +8,12 @@ import Link from 'next/link'
 import { client } from '@/lib/sanity.client'
 import { EditProfileForm } from '@/components/EditProfileForm'
 import { urlFor } from '@/lib/sanity.client'
+import { SubmissionForm } from '@/components/SubmissionForm'
 
 export default function ProfilePage() {
   const { data: session, status } = useSession()
   const [isEditing, setIsEditing] = useState(false)
+  const [isWritingArticle, setIsWritingArticle] = useState(false)
   const [authorData, setAuthorData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -120,6 +122,14 @@ export default function ProfilePage() {
               }}
             />
           </div>
+        ) : isWritingArticle ? (
+          <div className="max-w-4xl mx-auto bg-white p-10 md:p-16 border border-border shadow-2xl mb-12">
+            <div className="flex justify-between items-center mb-12 border-b border-border pb-6">
+              <h2 className="text-2xl font-black uppercase tracking-tighter">Draft New Article</h2>
+              <button onClick={() => setIsWritingArticle(false)} className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-primary transition-colors">Cancel</button>
+            </div>
+            <SubmissionForm session={session} />
+          </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-1 px-1 bg-border border border-border">
             {/* Recent Activity */}
@@ -172,10 +182,10 @@ export default function ProfilePage() {
                 <section className="bg-secondary p-10 text-white">
                   <h3 className="text-meta text-primary mb-4">Writer Console</h3>
                   <p className="text-sm font-medium text-zinc-400 leading-relaxed mb-8">Ready to submit a new investigative report to the international edition?</p>
-                  <Link href="/write-for-us" className="flex items-center justify-between w-full border-t border-zinc-700 pt-6 group">
+                  <button onClick={() => setIsWritingArticle(true)} className="flex items-center justify-between w-full border-t border-zinc-700 pt-6 group">
                     <span className="text-xs font-black uppercase tracking-[0.2em] group-hover:text-primary transition-colors">Write Article</span>
                     <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-2 transition-transform" />
-                  </Link>
+                  </button>
                 </section>
             </div>
           </div>

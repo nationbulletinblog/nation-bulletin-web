@@ -60,6 +60,8 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
       tags: [],
       authorName: session.user?.name || '',
       authorEmail: session.user?.email || '',
+      seoTitle: '',
+      seoDescription: '',
     }
   })
 
@@ -265,6 +267,28 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
                 </label>
              )}
           </div>
+        </div>
+
+        {/* SEO Metadata */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-zinc-100">
+           <div className="space-y-2">
+             <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Meta Title</label>
+             <input
+               {...register('seoTitle')}
+               placeholder="e.g. 5 Ways Technology is Changing Education..."
+               className="w-full px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-medium focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all duration-300"
+             />
+           </div>
+
+           <div className="space-y-2">
+             <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Meta Description</label>
+             <textarea
+               {...register('seoDescription')}
+               placeholder="Write a compelling description for search engines..."
+               rows={2}
+               className="w-full px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-medium focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all duration-300 resize-none"
+             />
+           </div>
         </div>
 
         {/* Content Editor */}

@@ -23,12 +23,12 @@ const components: PortableTextComponents = {
   },
   block: {
     h2: ({ children }) => (
-      <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight leading-tight mt-12 mb-6 text-foreground">
+      <h2 className="text-2xl md:text-3xl font-black capitalize tracking-tight leading-tight mt-12 mb-6 text-foreground">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight mt-10 mb-5 text-foreground">
+      <h3 className="text-xl md:text-2xl font-black capitalize tracking-tight mt-10 mb-5 text-foreground">
         {children}
       </h3>
     ),
