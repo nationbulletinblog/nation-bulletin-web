@@ -55,19 +55,6 @@ export default async function WriteForUsPage() {
             <PortableBody value={cms.body} />
           </div>
         ) : null}
-        
-        <div className="mt-16 pt-16 border-t border-zinc-100 flex flex-col items-center">
-           <div className="inline-flex items-center justify-center w-16 h-16 bg-zinc-50 rounded-2xl mb-6 shadow-inner">
-              <UserPlus className="w-8 h-8 text-primary" />
-           </div>
-           <h2 className="text-3xl font-black tracking-tight text-zinc-900 mb-4">Ready to Publish?</h2>
-           <p className="text-sm font-medium text-zinc-500 max-w-md mx-auto leading-relaxed mb-8">
-              Head over to your publisher dashboard to manage your author profile and submit new stories.
-           </p>
-           <Link href="/profile" className="flex items-center justify-center gap-2 px-10 py-4 bg-zinc-900 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-primary transition-all shadow-xl hover:shadow-primary/20">
-              Go to Publisher Dashboard <Globe className="w-4 h-4 ml-2" />
-           </Link>
-        </div>
       </div>
     </div>
   );
