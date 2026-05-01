@@ -15,11 +15,11 @@ export default async function ContentPolicyPage() {
             <div className="h-px flex-grow bg-primary"></div>
           </div>
 
-          <h1 className="mb-12 text-center text-5xl font-black uppercase tracking-tighter md:text-7xl">
+          <h1 className="mb-12 text-center text-5xl font-black tracking-tighter md:text-7xl">
             {page?.title ?? 'Content Policy'}
           </h1>
 
-          <div className="prose prose-xl prose-zinc max-w-none dark:prose-invert prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tighter">
+          <div className="prose prose-xl prose-zinc max-w-none dark:prose-invert prose-headings:font-black prose-headings:tracking-tighter">
             {page?.body?.length ? (
               <PortableBody value={page.body} />
             ) : (

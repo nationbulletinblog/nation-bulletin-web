@@ -3,12 +3,13 @@ import Link from "next/link";
 import { User, Calendar, ArrowRight } from "lucide-react";
 import { PostCard } from "@/components/PostCard";
 import { Sidebar } from "@/components/Sidebar";
+import { BlogList } from "@/components/BlogList";
 import { client } from "@/lib/sanity.client";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity.client";
 
-async function getPosts() {
-  const query = `*[_type == "post"] | order(publishedAt desc) {
+async function getPosts(limit: number) {
+  const query = `*[_type == "post"] | order(publishedAt desc) [0...${limit}] {
     _id,
     title,
     slug,
@@ -27,7 +28,8 @@ async function getPosts() {
 }
 
 export default async function Home() {
-  const posts = await getPosts();
+  // Fetch 5 for hero + 12 for initial list = 17 posts
+  const posts = await getPosts(17);
   const featuredPost = posts[0];
   const sidePosts = posts.slice(1, 5);
   const remainingPosts = posts.slice(5);
@@ -64,7 +66,7 @@ export default async function Home() {
                         {featuredPost.categories?.[0]?.title}
                       </span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-white hover:text-primary transition-colors cursor-pointer leading-[0.95] mb-8 tracking-tighter uppercase">
+                    <h1 className="text-4xl md:text-5xl font-black text-white hover:text-primary transition-colors cursor-pointer leading-[0.95] mb-8 tracking-tighter">
                       {featuredPost.title}
                     </h1>
                     <div className="inline-flex items-center gap-3 text-xs font-black uppercase tracking-widest text-white border-b-2 border-primary pb-2 hover:gap-5 transition-all">
@@ -95,13 +97,14 @@ export default async function Home() {
                       <span className="text-primary text-[9px] font-black uppercase tracking-widest block mb-2">
                         {post.categories?.[0]?.title}
                       </span>
-                      <h2 className="text-sm font-black text-white group-hover:text-primary transition-colors line-clamp-2 uppercase leading-tight">
+                      <h2 className="text-sm font-black text-white group-hover:text-primary transition-colors line-clamp-2 leading-tight">
                         {post.title}
                       </h2>
                     </div>
                    </Link>
                 </div>
               ))}
+
             </div>
           </div>
         </div>
@@ -114,15 +117,11 @@ export default async function Home() {
             {/* Left Content Area (9/12 Cols = 75%) */}
             <div className="lg:w-3/4">
                <div className="flex items-center justify-between border-b-2 border-primary pb-6 mb-12">
-                  <h2 className="text-2xl font-black tracking-tighter uppercase">ALL BLOGS</h2>
+                  <h2 className="text-2xl font-black tracking-tighter">ALL BLOGS</h2>
                </div>
 
-               {/* 3-Column Grid for Blog Posts */}
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {remainingPosts.map((post: any) => (
-                    <PostCard key={post._id} post={post} />
-                  ))}
-               </div>
+               {/* Load More List */}
+               <BlogList initialPosts={remainingPosts} initialOffset={5} />
             </div>
 
             {/* Right Sidebar Area (3/12 Cols = 25%) */}

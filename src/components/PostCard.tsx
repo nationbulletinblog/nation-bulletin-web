@@ -74,7 +74,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         </div>
 
         {/* Title */}
-        <h3 className="text-xl md:text-2xl font-black uppercase tracking-tighter leading-[1.1] mb-5 group-hover:text-primary transition-colors line-clamp-2">
+        <h3 className="text-xl md:text-2xl font-black capitalize tracking-tighter leading-[1.1] mb-5 group-hover:text-primary transition-colors line-clamp-2">
           <Link href={`/blog/${post.slug.current}`}>{post.title}</Link>
         </h3>
 

@@ -106,7 +106,7 @@ export default function ProfilePage() {
       <div className="container mx-auto px-4">
         {isEditing ? (
           <div className="max-w-4xl mx-auto bg-white p-10 md:p-16 border border-border shadow-2xl">
-            <h2 className="text-2xl font-black uppercase tracking-tighter mb-12 border-b border-border pb-6">Edit Profile</h2>
+            <h2 className="text-2xl font-black capitalize tracking-tighter mb-12 border-b border-border pb-6">Edit Profile</h2>
             <EditProfileForm 
               user={{
                 name: authorData?.name,
@@ -133,7 +133,7 @@ export default function ProfilePage() {
               {/* Recent Activity */}
               <div className="lg:col-span-8 bg-background p-10 md:p-14">
                   <div className="flex items-center justify-between mb-12 border-b border-border pb-6">
-                    <h2 className="text-3xl font-black uppercase tracking-tighter">My Articles</h2>
+                    <h2 className="text-3xl font-black capitalize tracking-tighter">My Articles</h2>
                     <Link href="/blog" className="text-meta text-zinc-400 hover:text-primary transition-colors flex items-center gap-2">
                         View Entire Archive <ArrowRight className="w-4 h-4" />
                     </Link>
@@ -148,7 +148,7 @@ export default function ProfilePage() {
                                 <span>Technology</span>
                                 <span className="text-zinc-300">Nov {10 + i}, 2023</span>
                             </div>
-                            <h3 className="text-xl font-black uppercase italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
+                            <h3 className="text-xl font-black capitalize italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
                                 Policy Shift: The New Ethics of Autonomous Systems
                             </h3>
                             <div className="mt-6 flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">

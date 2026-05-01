@@ -56,12 +56,10 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
           <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-4">
              <Link href="/" className="hover:text-primary transition-colors">Home</Link>
              <span className="w-4 h-px bg-zinc-200"></span>
-             <Link href="/blog" className="hover:text-primary transition-colors">Archive</Link>
-             <span className="w-4 h-px bg-zinc-200"></span>
              <span className="text-primary">{post.categories?.[0]?.title || 'General'}</span>
           </div>
           
-          <h1 className="text-2xl md:text-4xl font-black uppercase tracking-tight leading-[1.1] mb-6">
+          <h1 className="text-2xl md:text-4xl font-black tracking-tight leading-[1.1] mb-6">
             {post.title}
           </h1>
 
@@ -95,26 +93,27 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
         <div className="flex flex-col lg:flex-row gap-16">
           {/* Main Content Area */}
           <div className="lg:w-3/4">
-             {/* Main Image */}
-             {post.mainImage && (
-               <div className="aspect-[21/9] bg-zinc-800 mb-8 relative overflow-hidden group">
-                  <Image
-                    src={urlFor(post.mainImage).url()}
-                    alt={post.title}
-                    fill
-                    priority
-                    className="object-cover group-hover:scale-105 transition-transform duration-1000"
-                    sizes="(max-width: 1024px) 100vw, 66vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-                  <div className="absolute bottom-4 left-4 text-white text-[10px] font-black uppercase tracking-widest z-20">
-                    Lead Editorial Dispatch
-                  </div>
-               </div>
-             )}
-
-             {/* Prose Content */}
              <div className="max-w-3xl mx-auto">
+                {/* Main Image - Now aligned with content */}
+                {post.mainImage && (
+                  <div className="aspect-video bg-zinc-800 mb-10 relative overflow-hidden group rounded-sm shadow-2xl">
+                     <Image
+                       src={urlFor(post.mainImage).url()}
+                       alt={post.title}
+                       fill
+                       priority
+                       className="object-cover group-hover:scale-105 transition-transform duration-1000"
+                       sizes="(max-width: 1024px) 100vw, 800px"
+                     />
+                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10" />
+                     <div className="absolute bottom-6 left-6 text-white text-[10px] font-black uppercase tracking-widest z-20 flex items-center gap-3">
+                       <span className="w-8 h-px bg-primary"></span>
+                       Lead Editorial Dispatch
+                     </div>
+                  </div>
+                )}
+
+                {/* Prose Content */}
                 <div className="prose prose-zinc dark:prose-invert max-w-none">
                    <PortableBody value={post.body} />
                 </div>
@@ -128,7 +127,6 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                    ))}
                 </div>
              </div>
-
           </div>
 
           {/* Sidebar Area */}

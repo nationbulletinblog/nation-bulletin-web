@@ -17,7 +17,7 @@ export const SidebarSearch = () => {
 
   return (
     <section className="bg-muted p-8">
-      <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-6 border-b border-zinc-200 pb-4">Search Articles</h3>
+      <h3 className="text-xs font-black capitalize tracking-[0.2em] mb-6 border-b border-zinc-200 pb-4">Search Articles</h3>
       <form onSubmit={handleSearch} className="relative">
         <input 
           type="text" 

@@ -33,8 +33,8 @@ export const Sidebar = async () => {
     <aside className="space-y-12">
       {/* Categories - Now First */}
       <section>
-        <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-8 border-b border-border pb-4">Categories</h3>
-        <div className="max-h-[350px] overflow-y-auto pr-2 custom-scrollbar border border-border">
+        <h3 className="text-xs font-black capitalize tracking-[0.2em] mb-8 border-b border-border pb-4">Categories</h3>
+        <div className="border border-border">
            <div className="flex flex-col gap-px bg-border">
               {categories.map((cat: any) => (
                 <Link 
@@ -52,7 +52,7 @@ export const Sidebar = async () => {
 
       {/* Latest Posts - Renamed and Reordered */}
       <section>
-        <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-8 border-b border-border pb-4">Latest Posts</h3>
+        <h3 className="text-xs font-black capitalize tracking-[0.2em] mb-8 border-b border-border pb-4">Latest Posts</h3>
         <div className="space-y-6">
           {popularPosts.map((post: any, i: number) => (
             <div key={post._id} className="group flex gap-4 items-start">

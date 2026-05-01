@@ -15,11 +15,11 @@ export default async function PrivacyPage() {
             <div className="h-px flex-grow bg-primary"></div>
           </div>
 
-          <h1 className="mb-12 text-center text-5xl font-black uppercase tracking-tighter md:text-7xl">
+          <h1 className="mb-12 text-center text-5xl font-black tracking-tighter md:text-7xl">
             {page?.title ?? 'Privacy Policy'}
           </h1>
 
-          <div className="prose prose-xl prose-zinc max-w-none dark:prose-invert prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tighter">
+          <div className="prose prose-xl prose-zinc max-w-none dark:prose-invert prose-headings:font-black prose-headings:tracking-tighter">
             {page?.body?.length ? (
               <PortableBody value={page.body} />
             ) : (
@@ -28,7 +28,7 @@ export default async function PrivacyPage() {
                   Your privacy matters. This policy explains how we handle your information on Nation Bulletin.
                 </p>
                 <section className="mb-12">
-                  <h2 className="mb-6 text-3xl font-black uppercase tracking-tight">1. Information We Collect</h2>
+                  <h2 className="mb-6 text-3xl font-black capitalize tracking-tight">1. Information We Collect</h2>
                   <p className="text-sm font-medium leading-relaxed text-zinc-600">
                     We collect information you provide when you create an account, post an article, or contact us.
                     This includes your name and email address.

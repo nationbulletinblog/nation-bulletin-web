@@ -1,11 +1,11 @@
 import React from 'react'
-import { PostCard } from '@/components/PostCard'
 import { Sidebar } from '@/components/Sidebar'
+import { BlogList } from '@/components/BlogList'
 import { Folder } from 'lucide-react'
 import { client } from '@/lib/sanity.client'
 
-async function getCategoryPosts(slug: string) {
-  const query = `*[_type == "post" && references(*[_type == "category" && slug.current == $slug]._id)] | order(publishedAt desc) {
+async function getCategoryPosts(slug: string, limit: number) {
+  const query = `*[_type == "post" && references(*[_type == "category" && slug.current == $slug]._id)] | order(publishedAt desc) [0...${limit}] {
     _id,
     title,
     slug,
@@ -25,7 +25,7 @@ async function getCategoryPosts(slug: string) {
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const posts = await getCategoryPosts(slug);
+  const initialPosts = await getCategoryPosts(slug, 12);
 
   return (
     <div className="bg-background min-h-screen pt-12 pb-24">
@@ -46,26 +46,18 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
         <div className="flex flex-col lg:flex-row gap-16">
           {/* Main Feed */}
-          <div className="lg:w-2/3">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {posts.map((post: any) => (
-                   <PostCard key={post._id} post={post} />
-                ))}
-             </div>
-
-             {posts.length === 0 && (
-               <div className="py-24 text-center">
-                  <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">No intelligence dispatches found in this sector.</p>
-               </div>
+          <div className="lg:w-3/4">
+             {initialPosts.length > 0 ? (
+                <BlogList initialPosts={initialPosts} initialOffset={0} categorySlug={slug} />
+             ) : (
+                <div className="py-24 text-center">
+                   <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">No intelligence dispatches found in this sector.</p>
+                </div>
              )}
-
-             <div className="mt-20 pt-12 border-t border-border text-center">
-                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">End of Feed</span>
-             </div>
           </div>
 
           {/* Sidebar */}
-          <div className="lg:w-1/3">
+          <div className="lg:w-1/4">
              <div className="sticky top-32">
                 <Sidebar />
              </div>

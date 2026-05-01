@@ -23,17 +23,17 @@ const components: PortableTextComponents = {
   },
   block: {
     h2: ({ children }) => (
-      <h2 className="text-2xl md:text-3xl font-black capitalize tracking-tight leading-tight mt-12 mb-6 text-foreground">
+      <h2 className="text-2xl md:text-3xl font-black normal-case tracking-tight leading-tight mt-12 mb-6 text-foreground">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="text-xl md:text-2xl font-black capitalize tracking-tight mt-10 mb-5 text-foreground">
+      <h3 className="text-xl md:text-2xl font-black normal-case tracking-tight mt-10 mb-5 text-foreground">
         {children}
       </h3>
     ),
     h4: ({ children }) => (
-      <h4 className="text-lg md:text-xl font-black uppercase tracking-widest mt-8 mb-4 text-primary bg-muted inline-block px-2">
+      <h4 className="text-lg md:text-xl font-black normal-case tracking-widest mt-8 mb-4 text-primary bg-muted inline-block px-2">
         {children}
       </h4>
     ),
@@ -60,6 +60,11 @@ const components: PortableTextComponents = {
       <li className="flex items-start gap-4 text-zinc-700">
         <span className="mt-2 w-1.5 h-1.5 bg-primary flex-shrink-0" />
         <span>{children}</span>
+      </li>
+    ),
+    number: ({ children }) => (
+      <li className="text-zinc-700 font-medium pl-2">
+        {children}
       </li>
     ),
   },

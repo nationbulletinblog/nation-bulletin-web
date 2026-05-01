@@ -29,7 +29,7 @@ export default async function WriteForUsPage() {
               </span>
            </div>
            
-           <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-[0.9] mb-8 animate-in fade-in slide-in-from-bottom-3 duration-700 mx-auto max-w-4xl">
+           <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-[0.9] mb-8 animate-in fade-in slide-in-from-bottom-3 duration-700 mx-auto max-w-4xl">
              {cms?.title ? (
                 <>
                   {cms.title.includes('.') ? cms.title.split('.').map((part, i, arr) => (
@@ -51,7 +51,7 @@ export default async function WriteForUsPage() {
 
       <div className="max-w-4xl mx-auto px-4 pb-24 text-center">
         {cms?.body?.length ? (
-          <div className="prose prose-lg prose-zinc max-w-none dark:prose-invert prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tighter mb-16 text-left">
+          <div className="prose prose-lg prose-zinc max-w-none dark:prose-invert prose-headings:font-black prose-headings:tracking-tighter mb-16 text-left">
             <PortableBody value={cms.body} />
           </div>
         ) : null}
