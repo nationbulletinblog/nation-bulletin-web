@@ -2,6 +2,14 @@ import React from 'react';
 import { PortableBody } from '@/components/PortableBody';
 import { getStaticPageBySlug } from '@/lib/staticPage';
 
+export async function generateMetadata() {
+  const page = await getStaticPageBySlug('terms');
+  return {
+    title: page?.seoTitle || page?.title || 'Terms of Service',
+    description: page?.seoDescription || page?.subtitle,
+  };
+}
+
 export default async function TermsPage() {
   const page = await getStaticPageBySlug('terms');
 

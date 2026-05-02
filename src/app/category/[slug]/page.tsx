@@ -4,6 +4,10 @@ import { BlogList } from '@/components/BlogList'
 import { Folder } from 'lucide-react'
 import { client } from '@/lib/sanity.client'
 
+async function getCategory(slug: string) {
+  return await client.fetch(`*[_type == "category" && slug.current == $slug][0]{ title, description, seoTitle, seoDescription }`, { slug });
+}
+
 async function getCategoryPosts(slug: string, limit: number) {
   const query = `*[_type == "post" && references(*[_type == "category" && slug.current == $slug]._id)] | order(publishedAt desc) [0...${limit}] {
     _id,
@@ -21,6 +25,43 @@ async function getCategoryPosts(slug: string, limit: number) {
     }
   }`;
   return await client.fetch(query, { slug });
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const category = await getCategory(slug);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
+  if (!category) return { title: 'Category Not Found' };
+
+  return {
+    title: category.seoTitle || `${category.title} | Nation Bulletin`,
+    description: category.seoDescription || category.description,
+    alternates: {
+      canonical: `${baseUrl}/category/${slug}`,
+    },
+    openGraph: {
+      title: category.seoTitle || `${category.title} | Nation Bulletin`,
+      description: category.seoDescription || category.description,
+      url: `${baseUrl}/category/${slug}`,
+      siteName: 'Nation Bulletin',
+      type: 'website',
+      images: [
+        {
+          url: `${baseUrl}/logo.png`,
+          width: 800,
+          height: 600,
+          alt: 'Nation Bulletin Logo',
+        }
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: category.seoTitle || `${category.title} | Nation Bulletin`,
+      description: category.seoDescription || category.description,
+      images: [`${baseUrl}/logo.png`],
+    },
+  };
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {

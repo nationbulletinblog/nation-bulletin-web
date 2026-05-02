@@ -30,7 +30,7 @@ export const Footer = () => {
           {/* Column 1: Brand Info & Paid Opportunity */}
           <div className="space-y-8">
             <Link href="/" className="inline-block transition-opacity hover:opacity-80">
-               <Image src="/logo_footer.png" alt="Nation Bulletin Logo" width={200} height={60} className="object-contain" />
+               <Image src="/logo_footer.png" alt="Nation Bulletin Logo" width={200} height={60} className="object-contain" style={{ height: 'auto' }} />
             </Link>
             <p className="text-[13px] leading-relaxed font-medium !text-white">
               NationBulletin is a free blogging platform where writers, businesses, and creators can publish high-quality content, share insights, and gain online visibility. Join us to grow your authority, reach a wider audience, and build strong SEO presence.

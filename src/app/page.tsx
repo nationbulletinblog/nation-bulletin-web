@@ -8,6 +8,10 @@ import { client } from "@/lib/sanity.client";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity.client";
 
+async function getSiteSettings() {
+  return await client.fetch(`*[_type == "siteSettings"][0]{ seoTitle, seoDescription }`);
+}
+
 async function getPosts(limit: number) {
   const query = `*[_type == "post"] | order(publishedAt desc) [0...${limit}] {
     _id,
@@ -27,15 +31,68 @@ async function getPosts(limit: number) {
   return await client.fetch(query);
 }
 
+export async function generateMetadata() {
+  const settings = await getSiteSettings();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  
+  return {
+    title: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
+    description: settings?.seoDescription || "Modern news and blog platform providing investigative insights and global narratives.",
+    alternates: {
+      canonical: baseUrl,
+    },
+    openGraph: {
+      title: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
+      description: settings?.seoDescription || "Modern news and blog platform.",
+      url: baseUrl,
+      siteName: 'Nation Bulletin',
+      type: 'website',
+      images: [
+        {
+          url: `${baseUrl}/logo.png`,
+          width: 800,
+          height: 600,
+          alt: 'Nation Bulletin Logo',
+        }
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
+      description: settings?.seoDescription || "Modern news and blog platform.",
+      images: [`${baseUrl}/logo.png`],
+    },
+  };
+}
+
 export default async function Home() {
   // Fetch 5 for hero + 12 for initial list = 17 posts
   const posts = await getPosts(17);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   const featuredPost = posts[0];
   const sidePosts = posts.slice(1, 5);
   const remainingPosts = posts.slice(5);
 
   return (
     <div className="bg-background min-h-screen">
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Nation Bulletin",
+            "url": baseUrl,
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": `${baseUrl}/search?q={search_term_string}`,
+              "query-input": "required name=search_term_string"
+            }
+          })
+        }}
+      />
+
       {/* Bento Feature Grid */}
       <section className="py-12 border-b border-border">
         <div className="container mx-auto px-4">
@@ -43,13 +100,14 @@ export default async function Home() {
             {/* Primary Feature (Left - 7 Cols) */}
             {featuredPost && (
               <div className="lg:col-span-7 relative group overflow-hidden bg-slate-900 shadow-2xl">
-                <Link href={`/blog/${featuredPost.slug.current}`}>
+                <Link href={`/blog/${featuredPost.slug.current}`} className="relative block w-full h-full">
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
                   {featuredPost.mainImage ? (
                     <Image
                       src={urlFor(featuredPost.mainImage).url()}
-                      alt={featuredPost.title}
+                      alt={featuredPost.mainImage.alt || featuredPost.title}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 70vw"
                       className="object-cover transition-transform duration-1000 group-hover:scale-105"
                     />
                   ) : (
@@ -80,13 +138,14 @@ export default async function Home() {
             <div className="lg:col-span-5 grid grid-cols-1 md:grid-cols-2 gap-6">
               {sidePosts.map((post: any) => (
                 <div key={post._id} className="relative group overflow-hidden bg-zinc-900 border border-border/10">
-                   <Link href={`/blog/${post.slug.current}`}>
+                   <Link href={`/blog/${post.slug.current}`} className="relative block w-full h-full min-h-[200px]">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent z-10" />
                     {post.mainImage ? (
                       <Image
                         src={urlFor(post.mainImage).url()}
-                        alt={post.title}
+                        alt={post.mainImage.alt || post.title}
                         fill
+                        sizes="(max-width: 768px) 50vw, 25vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                     ) : (

@@ -12,6 +12,7 @@ async function getPost(slug: string) {
   const query = `*[_type == "post" && slug.current == $slug][0] {
     _id,
     title,
+    slug,
     excerpt,
     publishedAt,
     mainImage,
@@ -39,13 +40,36 @@ async function getPost(slug: string) {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getPost(slug);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
   if (!post) return { title: 'Post Not Found' };
 
   return {
     title: post.seoTitle || post.title,
     description: post.seoDescription || post.excerpt,
+    alternates: {
+      canonical: `${baseUrl}/blog/${post.slug.current}`,
+    },
     openGraph: {
+      title: post.seoTitle || post.title,
+      description: post.seoDescription || post.excerpt,
+      url: `${baseUrl}/blog/${post.slug.current}`,
+      siteName: 'Nation Bulletin',
+      images: post.mainImage ? [
+        {
+          url: urlFor(post.mainImage).url(),
+          width: 1200,
+          height: 630,
+          alt: post.mainImage.alt || post.title,
+        }
+      ] : [],
+      locale: 'en_US',
+      type: 'article',
+      publishedTime: post.publishedAt,
+      authors: [post.author?.name || 'Admin'],
+    },
+    twitter: {
+      card: 'summary_large_image',
       title: post.seoTitle || post.title,
       description: post.seoDescription || post.excerpt,
       images: post.mainImage ? [urlFor(post.mainImage).url()] : [],
@@ -56,6 +80,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function BlogPostDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getPost(slug);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
   if (!post) {
     notFound();
@@ -107,6 +132,31 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
              </div>
           </div>
         </div>
+        
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BlogPosting",
+              "headline": post.title,
+              "image": post.mainImage ? [urlFor(post.mainImage).url()] : [],
+              "datePublished": post.publishedAt,
+              "dateModified": post._updatedAt || post.publishedAt,
+              "author": [{
+                "@type": "Person",
+                "name": post.author?.name || "Admin",
+                "url": baseUrl
+              }],
+              "description": post.seoDescription || post.excerpt,
+              "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": `${baseUrl}/blog/${post.slug.current}`
+              }
+            })
+          }}
+        />
       </header>
 
       <div className="container mx-auto px-4">
@@ -119,7 +169,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                   <div className="aspect-video bg-zinc-800 mb-12 relative overflow-hidden group rounded-sm shadow-2xl">
                      <Image
                        src={urlFor(post.mainImage).url()}
-                       alt={post.title}
+                       alt={post.mainImage.alt || post.title}
                        fill
                        priority
                        className="object-cover group-hover:scale-105 transition-transform duration-1000"

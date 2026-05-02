@@ -8,9 +8,12 @@ import { getStaticPageBySlug } from "@/lib/staticPage";
 import { PortableBody } from "@/components/PortableBody";
 import { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Write for Us – Nation Bulletin',
-  description: 'Become a contributor and share your stories with a global audience.',
+export async function generateMetadata() {
+  const page = await getStaticPageBySlug('write-for-us');
+  return {
+    title: page?.seoTitle || page?.title || 'Write for Us – Nation Bulletin',
+    description: page?.seoDescription || page?.subtitle || 'Become a contributor and share your stories with a global audience.',
+  };
 }
 
 export default async function WriteForUsPage() {

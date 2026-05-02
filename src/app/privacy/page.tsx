@@ -2,6 +2,31 @@ import React from 'react';
 import { PortableBody } from '@/components/PortableBody';
 import { getStaticPageBySlug } from '@/lib/staticPage';
 
+export async function generateMetadata() {
+  const page = await getStaticPageBySlug('privacy');
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  
+  return {
+    title: page?.seoTitle || page?.title || 'Privacy Policy',
+    description: page?.seoDescription || page?.subtitle,
+    alternates: {
+      canonical: `${baseUrl}/privacy`,
+    },
+    openGraph: {
+      title: page?.seoTitle || page?.title || 'Privacy Policy',
+      description: page?.seoDescription || page?.subtitle,
+      url: `${baseUrl}/privacy`,
+      siteName: 'Nation Bulletin',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary',
+      title: page?.seoTitle || page?.title || 'Privacy Policy',
+      description: page?.seoDescription || page?.subtitle,
+    },
+  };
+}
+
 export default async function PrivacyPage() {
   const page = await getStaticPageBySlug('privacy');
 

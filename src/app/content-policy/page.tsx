@@ -2,6 +2,14 @@ import React from 'react';
 import { PortableBody } from '@/components/PortableBody';
 import { getStaticPageBySlug } from '@/lib/staticPage';
 
+export async function generateMetadata() {
+  const page = await getStaticPageBySlug('content-policy');
+  return {
+    title: page?.seoTitle || page?.title || 'Content Policy',
+    description: page?.seoDescription || page?.subtitle,
+  };
+}
+
 export default async function ContentPolicyPage() {
   const page = await getStaticPageBySlug('content-policy');
 

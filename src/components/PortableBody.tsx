@@ -12,7 +12,7 @@ const components: PortableTextComponents = {
         <div className="relative my-12 aspect-[16/10] w-full overflow-hidden border border-border bg-muted">
           <Image
             src={urlFor(value).url()}
-            alt=""
+            alt={value.alt || ""}
             fill
             className="object-cover hover:scale-105 transition-transform duration-1000"
             sizes="(max-width: 1024px) 100vw, 896px"

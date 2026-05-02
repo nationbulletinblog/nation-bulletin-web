@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${montserrat.variable} ${playfair.variable} ${outfit.variable} antialiased min-h-screen flex flex-col`}>
+      <body suppressHydrationWarning className={`${inter.variable} ${montserrat.variable} ${playfair.variable} ${outfit.variable} antialiased min-h-screen flex flex-col`}>
         <AuthContext>
           <Header />
           <main className="flex-grow">
