@@ -12,6 +12,7 @@ async function getPost(slug: string) {
   const query = `*[_type == "post" && slug.current == $slug][0] {
     _id,
     title,
+    excerpt,
     publishedAt,
     mainImage,
     body,
@@ -27,10 +28,29 @@ async function getPost(slug: string) {
     tags[]->{
       title,
       "slug": slug.current
-    }
+    },
+    seoTitle,
+    seoDescription
   }`;
   const post = await client.fetch(query, { slug });
   return post;
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getPost(slug);
+
+  if (!post) return { title: 'Post Not Found' };
+
+  return {
+    title: post.seoTitle || post.title,
+    description: post.seoDescription || post.excerpt,
+    openGraph: {
+      title: post.seoTitle || post.title,
+      description: post.seoDescription || post.excerpt,
+      images: post.mainImage ? [urlFor(post.mainImage).url()] : [],
+    },
+  };
 }
 
 export default async function BlogPostDetail({ params }: { params: Promise<{ slug: string }> }) {
@@ -50,10 +70,10 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
   return (
     <article className="bg-background min-h-screen pb-12">
       {/* Article Header */}
-      <header className="pt-8 pb-4 border-b border-border mb-8">
-        <div className="container mx-auto px-4 max-w-4xl">
+      <header className="pt-8 pb-4 border-b border-border mb-10">
+        <div className="container mx-auto px-4">
           {/* Breadcrumbs */}
-          <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-4">
+          <div className="flex items-center gap-4 text-[11px] font-black uppercase tracking-widest text-zinc-400 mb-4">
              <Link href="/" className="hover:text-primary transition-colors">Home</Link>
              <span className="w-4 h-px bg-zinc-200"></span>
              <span className="text-primary">{post.categories?.[0]?.title || 'General'}</span>
@@ -73,14 +93,14 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                    )}
                 </div>
                 <div>
-                   <p className="text-[8px] font-black uppercase tracking-widest text-zinc-400">Written By</p>
-                   <p className="text-[10px] font-black uppercase tracking-tighter text-foreground">Admin</p>
+                   <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Written By</p>
+                   <p className="text-[12px] font-black normal-case tracking-tight text-foreground">Admin</p>
                 </div>
              </div>
              
              <div className="hidden md:block h-8 w-px bg-border"></div>
 
-             <div className="flex items-center gap-8 text-[8px] font-black uppercase tracking-widest text-zinc-400">
+             <div className="flex items-center gap-8 text-[11px] font-black uppercase tracking-widest text-zinc-400">
                 <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> {date}</span>
                 <span className="flex items-center gap-2 font-bold text-foreground italic"><Clock className="w-4 h-4 text-primary" /> 12 MIN READ</span>
                 <span className="flex items-center gap-2"><Eye className="w-4 h-4 text-primary" /> {post.views || '1.2k'} VIEWS</span>
@@ -90,13 +110,13 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
       </header>
 
       <div className="container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row gap-16">
+        <div className="flex flex-col lg:flex-row gap-12">
           {/* Main Content Area */}
           <div className="lg:w-3/4">
-             <div className="max-w-3xl mx-auto">
+             <div className="w-full">
                 {/* Main Image - Now aligned with content */}
                 {post.mainImage && (
-                  <div className="aspect-video bg-zinc-800 mb-10 relative overflow-hidden group rounded-sm shadow-2xl">
+                  <div className="aspect-video bg-zinc-800 mb-12 relative overflow-hidden group rounded-sm shadow-2xl">
                      <Image
                        src={urlFor(post.mainImage).url()}
                        alt={post.title}
@@ -106,10 +126,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                        sizes="(max-width: 1024px) 100vw, 800px"
                      />
                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10" />
-                     <div className="absolute bottom-6 left-6 text-white text-[10px] font-black uppercase tracking-widest z-20 flex items-center gap-3">
-                       <span className="w-8 h-px bg-primary"></span>
-                       Lead Editorial Dispatch
-                     </div>
+
                   </div>
                 )}
 

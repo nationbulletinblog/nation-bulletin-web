@@ -69,7 +69,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
       <div className="p-6 md:p-8 flex flex-col flex-grow">
         {/* Metadata Top */}
         <div className="flex flex-wrap items-center gap-4 text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-6">
-           <span className="flex items-center gap-1.5"><User className="w-3 h-3 text-primary" /> {authorName}</span>
+           <span className="flex items-center gap-1.5 normal-case"><User className="w-3 h-3 text-primary" /> {authorName}</span>
            <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3 text-primary" /> {date}</span>
         </div>
 

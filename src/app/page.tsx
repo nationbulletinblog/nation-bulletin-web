@@ -56,21 +56,20 @@ export default async function Home() {
                     <div className="absolute inset-0 bg-zinc-800" />
                   )}
                   <div className="absolute top-8 left-8 z-20">
-                    <span className="px-5 py-2 bg-primary text-white text-xs font-black uppercase tracking-[0.2em]">Latest Investigation</span>
+                    <span className="px-5 py-2 bg-primary text-white text-xs font-black uppercase tracking-[0.2em]">
+                      {featuredPost.categories?.[0]?.title || 'Latest Investigation'}
+                    </span>
                   </div>
                   <div className="absolute bottom-12 left-12 right-12 z-20">
                     <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-300 mb-6">
-                      <span className="flex items-center gap-2"><User className="w-4 h-4 text-primary" /> Admin</span>
+                      <span className="flex items-center gap-2 normal-case"><User className="w-4 h-4 text-primary" /> Admin</span>
                       <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> {new Date(featuredPost.publishedAt).toLocaleDateString()}</span>
-                      <span className="flex items-center gap-2 font-bold text-white italic underline underline-offset-4 decoration-primary decoration-2">
-                        {featuredPost.categories?.[0]?.title}
-                      </span>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black text-white hover:text-primary transition-colors cursor-pointer leading-[0.95] mb-8 tracking-tighter">
                       {featuredPost.title}
                     </h1>
                     <div className="inline-flex items-center gap-3 text-xs font-black uppercase tracking-widest text-white border-b-2 border-primary pb-2 hover:gap-5 transition-all">
-                      Read Full Dispatch <ArrowRight className="w-5 h-5" />
+                      Read Full Blog <ArrowRight className="w-5 h-5" />
                     </div>
                   </div>
                 </Link>
@@ -93,10 +92,12 @@ export default async function Home() {
                     ) : (
                       <div className="absolute inset-0 bg-zinc-800" />
                     )}
-                    <div className="absolute bottom-6 left-6 right-6 z-20">
-                      <span className="text-primary text-[9px] font-black uppercase tracking-widest block mb-2">
+                    <div className="absolute top-4 left-4 z-20">
+                      <span className="px-3 py-1 bg-primary text-white text-[9px] font-black uppercase tracking-widest">
                         {post.categories?.[0]?.title}
                       </span>
+                    </div>
+                    <div className="absolute bottom-6 left-6 right-6 z-20">
                       <h2 className="text-sm font-black text-white group-hover:text-primary transition-colors line-clamp-2 leading-tight">
                         {post.title}
                       </h2>
@@ -117,7 +118,7 @@ export default async function Home() {
             {/* Left Content Area (9/12 Cols = 75%) */}
             <div className="lg:w-3/4">
                <div className="flex items-center justify-between border-b-2 border-primary pb-6 mb-12">
-                  <h2 className="text-2xl font-black tracking-tighter">ALL BLOGS</h2>
+                  <h2 className="text-2xl font-black tracking-tighter">OUR LATEST BLOGS</h2>
                </div>
 
                {/* Load More List */}

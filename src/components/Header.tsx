@@ -60,7 +60,7 @@ export const Header = () => {
                 <Link 
                   key={link.name} 
                   href={link.href}
-                  className="px-2.5 py-2 text-[10px] font-black uppercase tracking-wider text-zinc-500 hover:text-primary transition-all"
+                  className="px-2.5 py-2 text-sm font-black uppercase tracking-wider text-zinc-500 hover:text-primary transition-all"
                 >
                   {link.name}
                 </Link>
@@ -109,8 +109,8 @@ export const Header = () => {
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 md:gap-3">
-                    <Link href="/login" className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-primary transition-colors">Login</Link>
-                    <Link href="/register" className="px-6 py-3 bg-secondary text-white text-[10px] font-black uppercase tracking-widest hover:bg-primary transition-all shadow-lg active:scale-95">
+                    <Link href="/login" className="px-4 py-2 text-sm font-black uppercase tracking-widest text-zinc-500 hover:text-primary transition-colors">Login</Link>
+                    <Link href="/register" className="px-6 py-3 bg-secondary text-white text-sm font-black uppercase tracking-widest hover:bg-primary transition-all shadow-lg active:scale-95">
                       Register
                     </Link>
                   </div>

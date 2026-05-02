@@ -33,7 +33,7 @@ export const Sidebar = async () => {
     <aside className="space-y-12">
       {/* Categories - Now First */}
       <section>
-        <h3 className="text-xs font-black capitalize tracking-[0.2em] mb-8 border-b border-border pb-4">Categories</h3>
+        <h3 className="text-sm font-black capitalize tracking-[0.2em] mb-8 border-b border-border pb-4">Explore Our Categories</h3>
         <div className="border border-border">
            <div className="flex flex-col gap-px bg-border">
               {categories.map((cat: any) => (

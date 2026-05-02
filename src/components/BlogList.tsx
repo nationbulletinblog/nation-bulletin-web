@@ -68,7 +68,7 @@ export const BlogList = ({
               </>
             ) : (
               <>
-                <span>Load More Intelligence</span>
+                <span>View All Blogs</span>
                 <div className="w-6 h-px bg-white/30 group-hover:w-10 transition-all"></div>
               </>
             )}
