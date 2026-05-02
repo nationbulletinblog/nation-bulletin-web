@@ -108,11 +108,11 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
             {post.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-10 pt-4 border-t border-border mt-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10 pt-4 border-t border-border mt-4">
              <div className="flex items-center gap-4">
                 <div className="w-10 h-10 bg-muted border border-border flex items-center justify-center rounded-lg overflow-hidden relative">
                    {post.author?.image ? (
-                     <Image src={urlFor(post.author.image).url()} alt={post.author.name} fill className="object-cover" />
+                     <Image src={urlFor(post.author.image).url()} alt={post.author.name} fill sizes="40px" className="object-cover" />
                    ) : (
                      <User className="w-6 h-6 text-zinc-300" />
                    )}
@@ -123,9 +123,9 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                 </div>
              </div>
              
-             <div className="hidden md:block h-8 w-px bg-border"></div>
-
-             <div className="flex items-center gap-8 text-[11px] font-black uppercase tracking-widest text-zinc-400">
+             <div className="hidden sm:block h-8 w-px bg-border"></div>
+ 
+             <div className="flex flex-wrap items-center gap-4 sm:gap-8 text-[11px] font-black uppercase tracking-widest text-zinc-400">
                 <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> {date}</span>
                 <span className="flex items-center gap-2 font-bold text-foreground italic"><Clock className="w-4 h-4 text-primary" /> 12 MIN READ</span>
                 <span className="flex items-center gap-2"><Eye className="w-4 h-4 text-primary" /> {post.views || '1.2k'} VIEWS</span>

@@ -99,7 +99,7 @@ export default async function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
             {/* Primary Feature (Left - 7 Cols) */}
             {featuredPost && (
-              <div className="lg:col-span-7 relative group overflow-hidden bg-slate-900 shadow-2xl">
+              <div className="lg:col-span-7 relative group overflow-hidden bg-slate-900 shadow-2xl min-h-[400px] md:min-h-[600px]">
                 <Link href={`/blog/${featuredPost.slug.current}`} className="relative block w-full h-full">
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
                   {featuredPost.mainImage ? (

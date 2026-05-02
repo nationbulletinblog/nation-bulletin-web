@@ -96,8 +96,8 @@ export const Header = () => {
                 </div>
              </div>
 
-             {/* Auth Section */}
-             <div className="flex items-center gap-4">
+             {/* Auth Section - Hidden on Mobile */}
+             <div className="hidden md:flex items-center gap-4">
                 {session ? (
                   <div className="flex items-center gap-3">
                     <Link href="/profile" className="w-10 h-10 bg-muted flex items-center justify-center rounded-full hover:ring-2 ring-primary transition-all overflow-hidden border border-border">
@@ -115,53 +115,63 @@ export const Header = () => {
                     </Link>
                   </div>
                 )}
-
-                {/* Mobile Menu Toggle */}
-                <button 
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="lg:hidden p-2 bg-muted rounded-xl hover:text-primary transition-colors"
-                >
-                  {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                </button>
              </div>
+
+             {/* Mobile Menu Toggle */}
+             <button 
+               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+               className="lg:hidden p-2 bg-muted rounded-xl hover:text-primary transition-colors"
+             >
+               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+             </button>
           </div>
         </div>
 
         {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 top-[80px] bg-background z-[60] lg:hidden animate-in fade-in slide-in-from-top-4 duration-300">
-             <div className="container mx-auto px-4 py-12 flex flex-col items-center text-center space-y-8">
-                {navLinks.map((link) => (
-                   <Link 
-                     key={link.name} 
-                     href={link.href}
-                     className="text-4xl font-black uppercase tracking-tighter text-foreground hover:text-primary transition-colors"
-                     onClick={() => setIsMobileMenuOpen(false)}
-                   >
-                     {link.name}
-                   </Link>
-                ))}
+          <div className="fixed inset-0 top-[70px] md:top-[80px] bg-zinc-950 z-[60] lg:hidden animate-in fade-in slide-in-from-top-4 duration-300 overflow-y-auto">
+             <div className="container mx-auto px-6 py-12 flex flex-col items-center text-center space-y-10">
+                <nav className="flex flex-col space-y-6">
+                  {navLinks.map((link) => (
+                     <Link 
+                       key={link.name} 
+                       href={link.href}
+                       className="text-4xl font-black uppercase tracking-tighter text-white hover:text-primary transition-colors"
+                       onClick={() => setIsMobileMenuOpen(false)}
+                     >
+                       {link.name}
+                     </Link>
+                  ))}
+                </nav>
                 
-                <div className="w-full pt-12 border-t border-border flex flex-col items-center gap-8">
-                   <form onSubmit={handleSearchSubmit} className="w-full flex items-center bg-muted p-4">
+                <div className="w-full pt-12 border-t border-white/10 flex flex-col items-center gap-8">
+                   {/* Mobile Auth Links */}
+                   <div className="flex flex-col gap-4 w-full">
+                      {session ? (
+                         <div className="flex flex-col gap-4">
+                            <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="py-4 border border-white/20 text-white font-black uppercase text-xs tracking-widest">My Profile</Link>
+                            <button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} className="py-4 text-red-500 font-black uppercase text-xs tracking-widest">Sign Out</button>
+                         </div>
+                      ) : (
+                         <div className="flex flex-col gap-4">
+                            <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="py-4 border border-white/20 text-white font-black uppercase text-xs tracking-widest">Login</Link>
+                            <Link href="/register" onClick={() => setIsMobileMenuOpen(false)} className="py-4 bg-primary text-white font-black uppercase text-xs tracking-widest">Register Now</Link>
+                         </div>
+                      )}
+                   </div>
+
+                   <form onSubmit={handleSearchSubmit} className="w-full flex items-center bg-zinc-900 border border-white/10 p-4">
                       <input 
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="SEARCH STORIES..."
-                        className="flex-grow bg-transparent outline-none font-black text-xs uppercase"
+                        className="flex-grow bg-transparent outline-none font-black text-xs uppercase text-white"
                       />
                       <button type="submit">
                         <Search className="w-6 h-6 text-primary" />
                       </button>
                    </form>
-                   <Link 
-                     href="/register" 
-                     className="w-full py-6 bg-primary text-white font-black uppercase tracking-widest text-sm shadow-2xl shadow-primary/20"
-                     onClick={() => setIsMobileMenuOpen(false)}
-                   >
-                     Read All Stories
-                   </Link>
                 </div>
              </div>
           </div>
