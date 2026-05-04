@@ -1,49 +1,45 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import dynamic from 'next/dynamic'
 import Select, { MultiValue, SingleValue } from 'react-select'
 import { blogSubmissionSchema, BlogSubmission } from '../lib/validation'
 import { submitBlogPost } from '../app/actions/submit-blog'
+import { fetchCategories, fetchTags } from '../app/actions/blog'
+import { client } from '@/lib/sanity.client'
 import { Upload, X, Check, AlertCircle, Image as ImageIcon, Send, Type, Hash, Layers } from 'lucide-react'
+import { Session } from 'next-auth'
 
 // Dynamic import for React Quill to prevent SSR issues
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false })
 import 'react-quill-new/dist/quill.snow.css'
 
-const CATEGORY_OPTIONS = [
-  { value: 'Technology', label: 'Technology' },
-  { value: 'Economy', label: 'Economy' },
-  { value: 'Politics', label: 'Politics' },
-  { value: 'Culture', label: 'Culture' },
-  { value: 'Science', label: 'Science' },
-  { value: 'Lifestyle', label: 'Lifestyle' },
-  { value: 'Opinion', label: 'Opinion' },
-]
-
-const TAG_OPTIONS = [
-  { value: 'AI', label: 'AI' },
-  { value: 'Web3', label: 'Web3' },
-  { value: 'Sustainability', label: 'Sustainability' },
-  { value: 'GlobalGrowth', label: 'Global Growth' },
-  { value: 'FutureNow', label: 'Future Now' },
-  { value: 'Investigative', label: 'Investigative' },
-  { value: 'Politics2024', label: 'Politics' },
-  { value: 'DigitalTransformation', label: 'Digital' },
-  { value: 'Ethics', label: 'Ethics' },
-  { value: 'CultureShock', label: 'Culture' },
-]
-
-import { Session } from 'next-auth'
-
 export const SubmissionForm = ({ session }: { session: Session }) => {
+  const [categories, setCategories] = useState<{ value: string; label: string }[]>([])
+  const [tags, setTags] = useState<{ value: string; label: string }[]>([])
   const [status, setStatus] = useState<{ type: 'idle' | 'loading' | 'success' | 'error'; message: string }>({
     type: 'idle',
     message: '',
   })
   const [previewImage, setPreviewImage] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [catData, tagData] = await Promise.all([
+          fetchCategories(),
+          fetchTags()
+        ])
+        setCategories(catData)
+        setTags(tagData)
+      } catch (error) {
+        console.error('Error fetching categories/tags:', error)
+      }
+    }
+    fetchData()
+  }, [])
 
   const {
     register,
@@ -56,7 +52,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
     resolver: zodResolver(blogSubmissionSchema),
     defaultValues: {
       content: '',
-      category: 'Technology',
+      category: '',
       tags: [],
       authorName: session.user?.name || '',
       authorEmail: session.user?.email || '',
@@ -173,8 +169,8 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
       <div className="absolute top-0 left-0 w-full h-1 bg-primary/20"></div>
       
       <div className="mb-10 text-left">
-         <h2 className="text-2xl font-black tracking-tight text-zinc-900 mb-2">Draft Your Article</h2>
-         <p className="text-sm font-medium text-zinc-500">Provide the details of your story below for editorial review.</p>
+         <h2 className="text-2xl font-black tracking-tight text-zinc-900 mb-2">Editorial Console</h2>
+         <p className="text-sm font-medium text-zinc-500">Provide your article details below for editorial review.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -225,8 +221,8 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
               render={({ field }) => (
                 <Select
                   styles={selectStyles}
-                  options={CATEGORY_OPTIONS}
-                  value={CATEGORY_OPTIONS.find(opt => opt.value === field.value)}
+                  options={categories}
+                  value={categories.find(opt => opt.value === field.value)}
                   onChange={(val: SingleValue<{value: string, label: string}>) => field.onChange(val?.value)}
                   placeholder="Select a category..."
                 />
@@ -244,8 +240,8 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
                 <Select
                   isMulti
                   styles={selectStyles}
-                  options={TAG_OPTIONS}
-                  value={TAG_OPTIONS.filter(opt => field.value?.includes(opt.value))}
+                  options={tags}
+                  value={tags.filter(opt => field.value?.includes(opt.value))}
                   onChange={(vals: MultiValue<{value: string, label: string}>) => field.onChange(vals.map(v => v.value))}
                   placeholder="Add relevant tags..."
                 />

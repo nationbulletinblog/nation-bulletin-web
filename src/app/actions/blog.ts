@@ -34,3 +34,27 @@ export async function fetchPosts(offset: number, limit: number, categorySlug?: s
   const posts = await client.fetch(query);
   return posts;
 }
+
+export async function fetchCategories() {
+  const query = `*[_type == "category"] { "value": title, "label": title }`;
+  const categories = await client.fetch(query);
+  return categories;
+}
+
+export async function fetchTags() {
+  const query = `*[_type == "tag"] { "value": title, "label": title }`;
+  const tags = await client.fetch(query);
+  return tags;
+}
+
+export async function fetchAuthorByEmail(email: string) {
+  const query = `*[_type == "author" && email == $email][0] {
+    _id,
+    name,
+    email,
+    bio,
+    image
+  }`;
+  const author = await client.fetch(query, { email });
+  return author;
+}

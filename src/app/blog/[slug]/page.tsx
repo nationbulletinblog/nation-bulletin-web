@@ -1,6 +1,6 @@
 import React from 'react'
 import { Sidebar } from '@/components/Sidebar'
-import { Calendar, User, Eye, Clock, Send, Globe, Share2, Bookmark, ArrowRight } from 'lucide-react'
+import { Calendar, Clock, User, Share2, Facebook, Twitter, Linkedin, Link as LinkIcon, Globe, Eye, Send, Bookmark, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { client, urlFor } from '@/lib/sanity.client'
 import { PortableText } from '@portabletext/react'
@@ -96,7 +96,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
     <article className="bg-background min-h-screen pb-12">
       {/* Article Header */}
       <header className="pt-8 pb-4 border-b border-border mb-10">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 md:pl-14 lg:pl-20">
           {/* Breadcrumbs */}
           <div className="flex items-center gap-4 text-[11px] font-black uppercase tracking-widest text-zinc-400 mb-4">
              <Link href="/" className="hover:text-primary transition-colors">Home</Link>
@@ -110,13 +110,13 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10 pt-4 border-t border-border mt-4">
              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-muted border border-border flex items-center justify-center rounded-lg overflow-hidden relative">
-                   {post.author?.image ? (
-                     <Image src={urlFor(post.author.image).url()} alt={post.author.name} fill sizes="40px" className="object-cover" />
-                   ) : (
-                     <User className="w-6 h-6 text-zinc-300" />
-                   )}
-                </div>
+                 <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center rounded-lg overflow-hidden relative">
+                    {post.author?.image ? (
+                      <Image src={urlFor(post.author.image).url()} alt={post.author.name} fill sizes="40px" className="object-cover" />
+                    ) : (
+                      <Globe className="w-5 h-5 text-primary" />
+                    )}
+                 </div>
                 <div>
                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Written By</p>
                    <p className="text-[12px] font-black normal-case tracking-tight text-foreground">Admin</p>
@@ -163,7 +163,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Main Content Area */}
           <div className="lg:w-3/4">
-             <div className="w-full">
+             <div className="w-full md:pl-10 lg:pl-16 border-l-2 border-zinc-50">
                 {/* Main Image - Now aligned with content */}
                 {post.mainImage && (
                   <div className="aspect-video bg-zinc-800 mb-12 relative overflow-hidden group rounded-sm shadow-2xl">

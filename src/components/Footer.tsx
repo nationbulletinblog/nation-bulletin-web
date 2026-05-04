@@ -72,12 +72,12 @@ export const Footer = () => {
           <div className="border-l border-zinc-800 md:pl-12">
             <div className="p-5 bg-zinc-800/50 border border-zinc-700 rounded-lg space-y-3">
                <h5 className="text-[10px] font-black uppercase tracking-widest text-primary italic underline underline-offset-4">Paid Content Opportunity</h5>
-               <p className="text-[11px] leading-relaxed !text-white">
-                  SEO-friendly guest posts, Do-follow backlinks, Brand promotion to a targeted audience, Fast approval and permanent placement.
-               </p>
+                <p className="text-[11px] leading-relaxed !text-white">
+                   We offer SEO-friendly guest posts with high-quality do-follow backlinks, helping boost your website’s authority and search rankings. We provide fast approval and permanent content placement for long-term benefits.
+                </p>
                <div className="flex items-center gap-2 text-[11px] font-bold text-white mt-4">
                   <Mail className="w-3.5 h-3.5 text-primary" />
-                  <span>xyz@email.com</span>
+                  <a href="mailto:submit@nationbulletin.com" className="hover:text-primary transition-colors">submit@nationbulletin.com</a>
                </div>
             </div>
           </div>

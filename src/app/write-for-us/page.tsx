@@ -1,9 +1,5 @@
-import { SubmissionForm } from "@/components/SubmissionForm";
 import React from "react";
-import { PenTool, Zap, Lock, LogIn, UserPlus, Globe } from "lucide-react";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import Link from "next/link";
+import { PenTool } from "lucide-react";
 import { getStaticPageBySlug } from "@/lib/staticPage";
 import { PortableBody } from "@/components/PortableBody";
 import { Metadata } from 'next';
@@ -17,7 +13,6 @@ export async function generateMetadata() {
 }
 
 export default async function WriteForUsPage() {
-  const session = await getServerSession(authOptions);
   const cms = await getStaticPageBySlug("write-for-us");
 
   return (
@@ -46,9 +41,16 @@ export default async function WriteForUsPage() {
              )}
            </h1>
            
-           <p className="max-w-2xl mx-auto text-base md:text-xl font-medium text-zinc-500 leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-1000">
-             {cms?.subtitle || "We are looking for bold perspectives, investigative insights, and stories that move the needle. Join our global network of professional authors."}
+           <p className="max-w-3xl mx-auto text-base md:text-xl font-medium text-zinc-500 leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-1000">
+             {cms?.subtitle || "We offer SEO-friendly guest posts with high-quality do-follow backlinks, helping boost your website’s authority and search rankings. Your brand will be promoted to a targeted audience, ensuring maximum visibility and relevance. We provide fast approval and permanent content placement for long-term benefits."}
            </p>
+           
+           <div className="mt-10 flex flex-col items-center gap-2 animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-300">
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Direct Inquiries</span>
+              <a href="mailto:submit@nationbulletin.com" className="text-2xl md:text-3xl font-black italic tracking-tighter hover:text-primary transition-colors border-b-2 border-primary/20 hover:border-primary">
+                 submit@nationbulletin.com
+              </a>
+           </div>
         </div>
       </header>
 

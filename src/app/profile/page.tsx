@@ -3,12 +3,13 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { User, Shield, ArrowRight, TrendingUp, Loader2 } from 'lucide-react'
+import { User, Shield, ArrowRight, TrendingUp, Loader2, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { client } from '@/lib/sanity.client'
 import { EditProfileForm } from '@/components/EditProfileForm'
 import { urlFor } from '@/lib/sanity.client'
 import { SubmissionForm } from '@/components/SubmissionForm'
+import { fetchAuthorByEmail } from '@/app/actions/blog'
 
 export default function ProfilePage() {
   const { data: session, status } = useSession()
@@ -25,14 +26,7 @@ export default function ProfilePage() {
 
   const fetchAuthorData = async () => {
     try {
-      const query = `*[_type == "author" && email == $email][0] {
-        _id,
-        name,
-        email,
-        bio,
-        image
-      }`
-      const data = await client.fetch(query, { email: session?.user?.email })
+      const data = await fetchAuthorByEmail(session?.user?.email!)
       setAuthorData(data)
     } catch (error) {
       console.error('Error fetching author data:', error)
@@ -62,7 +56,7 @@ export default function ProfilePage() {
       <header className="pt-20 pb-16 masthead-line mb-16">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-12">
            <div className="flex items-center gap-10">
-              <div className="w-24 h-24 bg-muted flex items-center justify-center border border-border overflow-hidden">
+              <div className="w-24 h-24 bg-zinc-900 flex items-center justify-center border border-zinc-800 overflow-hidden">
                 {authorData?.image ? (
                   <img 
                     src={urlFor(authorData.image).url()} 
@@ -70,7 +64,7 @@ export default function ProfilePage() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <User className="w-10 h-10 text-zinc-300" />
+                  <Globe className="w-10 h-10 text-primary" />
                 )}
               </div>
               <div className="text-left">
