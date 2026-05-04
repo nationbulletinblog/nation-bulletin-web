@@ -1,6 +1,6 @@
 import React from 'react'
 import { Sidebar } from '@/components/Sidebar'
-import { Calendar, Clock, User, Share2, Facebook, Twitter, Linkedin, Link as LinkIcon, Globe, Eye, Send, Bookmark, ArrowRight } from 'lucide-react'
+import { Calendar, Clock, User, Share2, Globe, Eye, Send, Bookmark, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { client, urlFor } from '@/lib/sanity.client'
 import { PortableText } from '@portabletext/react'
