@@ -25,6 +25,11 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       canonical: './',
     },
+    icons: {
+      icon: '/images/globe-avatar.png',
+      shortcut: '/images/globe-avatar.png',
+      apple: '/images/globe-avatar.png',
+    },
   };
 }
 
