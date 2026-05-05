@@ -3,25 +3,21 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ShieldCheck, Globe, Send, Share2, Mail, Users, Video } from 'lucide-react'
 
-export const Footer = () => {
+import { client } from '@/lib/sanity.client'
+
+export const Footer = async () => {
   const categories = [
     'Business', 'Health', 'Services', 'Education', 
     'Technology', 'Shopping', 'Home', 'General', 
     'SEO', 'Travel'
   ]
 
-  const sponsorLinks = [
-    { name: 'Digital Transformation Services', href: '#' },
-    { name: 'Mobility Solutions India', href: '#' },
-    { name: 'Enterprise App Development Company', href: '#' },
-    { name: 'IoT Consulting Services', href: '#' },
-    { name: 'AR VR App Development Company', href: '#' },
-    { name: 'DevOps Consulting Services', href: '#' },
-    { name: 'AI and ML Solutions', href: '#' },
-    { name: 'Blockchain Application Development Company', href: '#' },
-    { name: 'Software Development Company India', href: '#' },
-    { name: 'Serverless App Development Company', href: '#' },
-  ]
+  // Fetch latest 4 posts
+  const latestPosts = await client.fetch(`*[_type == "post"] | order(publishedAt desc) [0...4] {
+    _id,
+    title,
+    slug
+  }`)
 
   return (
     <footer className="bg-[#111111] text-zinc-300 pt-20">
@@ -53,15 +49,15 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Column 3: Sponsor Links */}
+          {/* Column 3: Latest Blogs */}
           <div className="border-l border-zinc-800 md:pl-12">
-            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8">Sponsor Links</h4>
-            <ul className="space-y-3 text-[11px] font-bold uppercase tracking-widest">
-              {sponsorLinks.map((link) => (
-                <li key={link.name}>
-                  <Link href={link.href} className="text-zinc-300 hover:text-primary transition-colors flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full" />
-                    {link.name}
+            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8">Latest Blogs</h4>
+            <ul className="space-y-4 text-[11px] font-bold uppercase tracking-widest">
+              {latestPosts.map((post: any) => (
+                <li key={post._id}>
+                  <Link href={`/blog/${post.slug.current}`} className="text-zinc-300 hover:text-primary transition-colors flex items-start gap-3 group">
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 flex-shrink-0 group-hover:scale-125 transition-transform" />
+                    <span className="leading-relaxed line-clamp-2">{post.title}</span>
                   </Link>
                 </li>
               ))}
