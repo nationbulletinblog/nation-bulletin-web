@@ -10,17 +10,23 @@ const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", weight: ["400", "500", "600", "700", "800", "900"] });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", weight: ["300", "400", "500", "600", "700", "800", "900"] });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
-  title: {
-    default: "Nation Bulletin | Stories & Insights",
-    template: "%s | Nation Bulletin"
-  },
-  description: "A professional blog for the modern era, delivering curated news and trending stories.",
-  alternates: {
-    canonical: './',
-  },
-};
+import { fetchSiteSettings } from "@/app/actions/blog";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await fetchSiteSettings();
+  
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
+    title: {
+      default: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
+      template: "%s | Nation Bulletin"
+    },
+    description: settings?.seoDescription || "A professional blog for the modern era, delivering curated news and trending stories.",
+    alternates: {
+      canonical: './',
+    },
+  };
+}
 
 export default function RootLayout({
   children,

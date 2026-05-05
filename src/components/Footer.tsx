@@ -12,12 +12,15 @@ export const Footer = async () => {
     'SEO', 'Travel'
   ]
 
-  // Fetch latest 4 posts
-  const latestPosts = await client.fetch(`*[_type == "post"] | order(publishedAt desc) [0...4] {
-    _id,
-    title,
-    slug
-  }`)
+  // Fetch latest 4 posts and site settings
+  const [latestPosts, settings] = await Promise.all([
+    client.fetch(`*[_type == "post"] | order(publishedAt desc) [0...4] {
+      _id,
+      title,
+      slug
+    }`),
+    client.fetch(`*[_type == "siteSettings"][0]`)
+  ])
 
   return (
     <footer className="bg-[#111111] text-zinc-300 pt-20">
@@ -29,7 +32,7 @@ export const Footer = async () => {
                <Image src="/logo_footer.png" alt="Nation Bulletin Logo" width={200} height={60} className="object-contain" style={{ height: 'auto' }} />
             </Link>
             <p className="text-[13px] leading-relaxed font-medium !text-white">
-              NationBulletin is a free blogging platform where writers, businesses, and creators can publish high-quality content, share insights, and gain online visibility. Join us to grow your authority, reach a wider audience, and build strong SEO presence.
+              {settings?.footerAbout || "NationBulletin is a free blogging platform where writers, businesses, and creators can publish high-quality content, share insights, and gain online visibility. Join us to grow your authority, reach a wider audience, and build strong SEO presence."}
             </p>
           </div>
 
@@ -67,13 +70,17 @@ export const Footer = async () => {
           {/* Column 4: Paid Opportunity */}
           <div className="border-l border-zinc-800 md:pl-12">
             <div className="p-5 bg-zinc-800/50 border border-zinc-700 rounded-lg space-y-3">
-               <h5 className="inline-block px-3 py-1 bg-[#ff0000] text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Paid Content Opportunity</h5>
+               <h5 className="inline-block px-3 py-1 bg-[#ff0000] text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+                 {settings?.paidContentTitle || "Paid Content Opportunity"}
+               </h5>
                 <p className="text-[13px] leading-relaxed font-medium !text-white opacity-90">
-                   We offer SEO-friendly guest posts with high-quality do-follow backlinks, helping boost your website’s authority and search rankings. We provide fast approval and permanent content placement for long-term benefits.
+                   {settings?.paidContentDescription || "We offer SEO-friendly guest posts with high-quality do-follow backlinks, helping boost your website’s authority and search rankings. We provide fast approval and permanent content placement for long-term benefits."}
                 </p>
                <div className="flex items-center gap-3 text-[13px] font-black text-white mt-6 group">
                   <Mail className="w-4 h-4 text-[#ff4d4d] group-hover:scale-110 transition-transform" />
-                  <a href="mailto:submit@nationbulletin.com" className="hover:text-[#ff4d4d] transition-colors border-b border-white/10 hover:border-[#ff4d4d]">submit@nationbulletin.com</a>
+                  <a href={`mailto:${settings?.contactEmail || "submit@nationbulletin.com"}`} className="hover:text-[#ff4d4d] transition-colors border-b border-white/10 hover:border-[#ff4d4d]">
+                    {settings?.contactEmail || "submit@nationbulletin.com"}
+                  </a>
                </div>
             </div>
           </div>

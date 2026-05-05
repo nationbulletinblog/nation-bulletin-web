@@ -58,3 +58,17 @@ export async function fetchAuthorByEmail(email: string) {
   const author = await client.fetch(query, { email });
   return author;
 }
+export async function fetchSiteSettings() {
+  const query = `*[_type == "siteSettings"][0] {
+    title,
+    description,
+    seoTitle,
+    seoDescription,
+    footerAbout,
+    paidContentTitle,
+    paidContentDescription,
+    contactEmail
+  }`;
+  const settings = await client.fetch(query);
+  return settings;
+}

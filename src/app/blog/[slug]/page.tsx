@@ -120,7 +120,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                     )}
                  </div>
                 <div>
-                   <p className="text-[10px] font-black uppercase tracking-widest !text-black">Written By</p>
+                   <p className="text-[10px] font-bold uppercase tracking-widest !text-black">Written By</p>
                    <p className="text-[12px] font-black normal-case tracking-tight !text-black">Admin</p>
                 </div>
              </div>
