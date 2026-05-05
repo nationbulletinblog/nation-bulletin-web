@@ -8,6 +8,7 @@ export const blogSubmissionSchema = z.object({
   category: z.string().min(1, 'Category is required'),
   tags: z.array(z.string()).min(1, 'At least one tag is required'),
   mainImage: z.any().optional(),
+  imageAlt: z.string().optional(),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
 })

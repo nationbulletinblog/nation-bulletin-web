@@ -85,9 +85,9 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
         {/* Bottom Bar */}
         <div className="mt-auto pt-6 border-t border-border flex items-center justify-between">
-           <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-zinc-400">
-              <span className="flex items-center gap-1.5"><Eye className="w-4 h-4 text-zinc-300" /> {viewsToDisplay} VIEWS</span>
-           </div>
+            <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-zinc-400">
+               <span className="flex items-center gap-1.5"><Eye className="w-4 h-4 text-zinc-300" /> {viewsToDisplay} VIEWS</span>
+            </div>
            <Link href={`/blog/${post.slug.current}`} className="group/btn flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:translate-x-1 transition-transform">
              READ MORE <ArrowRight className="w-4 h-4" />
            </Link>

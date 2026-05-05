@@ -58,6 +58,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
       authorEmail: session.user?.email || '',
       seoTitle: '',
       seoDescription: '',
+      imageAlt: '',
     }
   })
 
@@ -89,6 +90,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
     formData.append('category', data.category)
     if (data.seoTitle) formData.append('seoTitle', data.seoTitle)
     if (data.seoDescription) formData.append('seoDescription', data.seoDescription)
+    if (data.imageAlt) formData.append('imageAlt', data.imageAlt)
     data.tags.forEach(tag => formData.append('tags', tag))
     
     if (data.mainImage) {
@@ -108,11 +110,14 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
 
   const quillModules = useMemo(() => ({
     toolbar: [
-      [{ header: [1, 2, 3, false] }],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
       ['bold', 'italic', 'underline', 'strike'],
       [{ list: 'ordered' }, { list: 'bullet' }],
       ['link', 'clean'],
     ],
+    clipboard: {
+      matchVisual: false, // Prevents extra newlines when pasting
+    }
   }), [])
 
   const selectStyles = {
@@ -277,6 +282,16 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
                 </label>
              )}
           </div>
+        
+        {/* Image Alt Text */}
+        <div className="space-y-2">
+          <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Image Alt Text (SEO)</label>
+          <input
+            {...register('imageAlt')}
+            placeholder="Describe the image for accessibility and SEO..."
+            className="w-full px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-medium focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all duration-300"
+          />
+        </div>
         </div>
 
         {/* SEO Metadata */}

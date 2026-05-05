@@ -9,6 +9,9 @@ export async function generateMetadata() {
   return {
     title: page?.seoTitle || page?.title || 'Write for Us – Nation Bulletin',
     description: page?.seoDescription || page?.subtitle || 'Become a contributor and share your stories with a global audience.',
+    alternates: {
+      canonical: '/write-for-us',
+    },
   };
 }
 

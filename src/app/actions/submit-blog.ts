@@ -2,6 +2,7 @@
 import { writeClient } from '@/lib/sanity.client'
 import { blogSubmissionSchema, BlogSubmission } from '@/lib/validation'
 import { revalidatePath } from 'next/cache'
+import { htmlToPortableText } from '@/lib/portableText'
 
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -20,6 +21,7 @@ export async function submitBlogPost(formData: FormData) {
       authorName: formData.get('authorName'),
       authorEmail: formData.get('authorEmail'),
       category: formData.get('category'),
+      imageAlt: formData.get('imageAlt') || '',
       seoTitle: formData.get('seoTitle') || '',
       seoDescription: formData.get('seoDescription') || '',
       tags: formData.getAll('tags'),
@@ -76,7 +78,10 @@ export async function submitBlogPost(formData: FormData) {
       }
     }
 
-    // 7. Create the post in Sanity as a draft
+    // 7. Parse HTML content to basic Portable Text blocks
+    const bodyBlocks = htmlToPortableText(validatedData.content);
+
+    // 8. Create the post in Sanity as a draft
     const newPost = {
       _type: 'post',
       title: validatedData.title,
@@ -87,19 +92,7 @@ export async function submitBlogPost(formData: FormData) {
           .replace(/\s+/g, '-')
           .slice(0, 96),
       },
-      body: [
-        {
-          _key: `block-${crypto.randomUUID()}`,
-          _type: 'block',
-          children: [
-            {
-              _key: `span-${crypto.randomUUID()}`,
-              _type: 'span',
-              text: validatedData.content,
-            },
-          ],
-        },
-      ],
+      body: bodyBlocks,
       author: author ? { _type: 'reference', _ref: author._id } : undefined,
       authorInfo: {
         name: validatedData.authorName,
@@ -109,6 +102,7 @@ export async function submitBlogPost(formData: FormData) {
       tags: tagRefs.length > 0 ? tagRefs : undefined,
       mainImage: mainImageAssetId ? {
         _type: 'image',
+        alt: validatedData.imageAlt || validatedData.title,
         asset: {
           _type: 'reference',
           _ref: mainImageAssetId

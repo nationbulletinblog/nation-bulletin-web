@@ -11,8 +11,15 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", weight: ["300", "400", "500", "600", "700", "800", "900"] });
 
 export const metadata: Metadata = {
-  title: "Nation Bulletin | Stories & Insights",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
+  title: {
+    default: "Nation Bulletin | Stories & Insights",
+    template: "%s | Nation Bulletin"
+  },
   description: "A professional blog for the modern era, delivering curated news and trending stories.",
+  alternates: {
+    canonical: './',
+  },
 };
 
 export default function RootLayout({

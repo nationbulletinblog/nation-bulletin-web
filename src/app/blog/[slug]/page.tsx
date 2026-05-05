@@ -110,24 +110,26 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10 pt-4 border-t border-border mt-4">
              <div className="flex items-center gap-4">
-                 <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center rounded-lg overflow-hidden relative">
+                 <div className="w-10 h-10 flex items-center justify-center overflow-hidden relative">
                     {post.author?.image ? (
                       <Image src={urlFor(post.author.image).url()} alt={post.author.name} fill sizes="40px" className="object-cover" />
                     ) : (
-                      <Globe className="w-5 h-5 text-primary" />
+                      <div className="relative w-full h-full">
+                          <Image src="/images/globe-avatar.png" alt="Admin" fill sizes="40px" className="object-contain" />
+                      </div>
                     )}
                  </div>
                 <div>
-                   <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Written By</p>
-                   <p className="text-[12px] font-black normal-case tracking-tight text-foreground">Admin</p>
+                   <p className="text-[10px] font-black uppercase tracking-widest !text-black">Written By</p>
+                   <p className="text-[12px] font-black normal-case tracking-tight !text-black">Admin</p>
                 </div>
              </div>
              
              <div className="hidden sm:block h-8 w-px bg-border"></div>
  
-             <div className="flex flex-wrap items-center gap-4 sm:gap-8 text-[11px] font-black uppercase tracking-widest text-zinc-400">
+             <div className="flex flex-wrap items-center gap-4 sm:gap-8 text-[11px] font-black uppercase tracking-widest !text-black">
                 <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> {date}</span>
-                <span className="flex items-center gap-2 font-bold text-foreground italic"><Clock className="w-4 h-4 text-primary" /> 12 MIN READ</span>
+                <span className="flex items-center gap-2 font-bold italic"><Clock className="w-4 h-4 text-primary" /> 12 MIN READ</span>
                 <span className="flex items-center gap-2"><Eye className="w-4 h-4 text-primary" /> {post.views || '1.2k'} VIEWS</span>
              </div>
           </div>
@@ -180,8 +182,8 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                   </div>
                 )}
 
-                {/* Prose Content */}
-                <div className="prose prose-zinc dark:prose-invert max-w-none">
+                {/* Article Body Content */}
+                <div className="max-w-none text-zinc-800 leading-relaxed">
                    <PortableBody value={post.body} />
                 </div>
 

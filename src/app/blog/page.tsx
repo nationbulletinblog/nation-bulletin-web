@@ -3,6 +3,15 @@ import { PostCard } from "@/components/PostCard";
 import { Sidebar } from "@/components/Sidebar";
 import { Search, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 import { client } from "@/lib/sanity.client";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Blog Archive – Insights & Stories",
+  description: "Explore our full collection of articles, insights, and trending stories on Nation Bulletin.",
+  alternates: {
+    canonical: "/blog",
+  },
+};
 
 async function getPosts() {
   const query = `*[_type == "post"] | order(publishedAt desc) {

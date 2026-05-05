@@ -33,9 +33,19 @@ const components: PortableTextComponents = {
       </h3>
     ),
     h4: ({ children }) => (
-      <h4 className="text-lg md:text-xl font-black normal-case tracking-widest mt-8 mb-4 text-primary bg-muted inline-block px-2">
+      <h4 className="text-lg md:text-xl font-black normal-case tracking-tight mt-8 mb-4 text-foreground">
         {children}
       </h4>
+    ),
+    h5: ({ children }) => (
+      <h5 className="text-base md:text-lg font-black normal-case tracking-tight mt-6 mb-3 text-foreground">
+        {children}
+      </h5>
+    ),
+    h6: ({ children }) => (
+      <h6 className="text-sm md:text-base font-black normal-case tracking-wider mt-4 mb-2 text-primary">
+        {children}
+      </h6>
     ),
     normal: ({ children }) => (
       <p className="text-base md:text-[17px] leading-relaxed text-zinc-700 mb-6 font-medium">

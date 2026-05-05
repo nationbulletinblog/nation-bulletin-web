@@ -67,13 +67,13 @@ export const Footer = async () => {
           {/* Column 4: Paid Opportunity */}
           <div className="border-l border-zinc-800 md:pl-12">
             <div className="p-5 bg-zinc-800/50 border border-zinc-700 rounded-lg space-y-3">
-               <h5 className="text-[10px] font-black uppercase tracking-widest text-primary italic underline underline-offset-4">Paid Content Opportunity</h5>
-                <p className="text-[11px] leading-relaxed !text-white">
+               <h5 className="inline-block px-3 py-1 bg-[#ff0000] text-white text-[10px] font-black uppercase tracking-[0.2em] mb-4">Paid Content Opportunity</h5>
+                <p className="text-[13px] leading-relaxed font-medium !text-white opacity-90">
                    We offer SEO-friendly guest posts with high-quality do-follow backlinks, helping boost your website’s authority and search rankings. We provide fast approval and permanent content placement for long-term benefits.
                 </p>
-               <div className="flex items-center gap-2 text-[11px] font-bold text-white mt-4">
-                  <Mail className="w-3.5 h-3.5 text-primary" />
-                  <a href="mailto:submit@nationbulletin.com" className="hover:text-primary transition-colors">submit@nationbulletin.com</a>
+               <div className="flex items-center gap-3 text-[13px] font-black text-white mt-6 group">
+                  <Mail className="w-4 h-4 text-[#ff4d4d] group-hover:scale-110 transition-transform" />
+                  <a href="mailto:submit@nationbulletin.com" className="hover:text-[#ff4d4d] transition-colors border-b border-white/10 hover:border-[#ff4d4d]">submit@nationbulletin.com</a>
                </div>
             </div>
           </div>

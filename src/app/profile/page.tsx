@@ -56,7 +56,7 @@ export default function ProfilePage() {
       <header className="pt-20 pb-16 masthead-line mb-16">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-12">
            <div className="flex items-center gap-10">
-              <div className="w-24 h-24 bg-zinc-900 flex items-center justify-center border border-zinc-800 overflow-hidden">
+              <div className="w-24 h-24 flex items-center justify-center overflow-hidden">
                 {authorData?.image ? (
                   <img 
                     src={urlFor(authorData.image).url()} 
@@ -64,7 +64,9 @@ export default function ProfilePage() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <Globe className="w-10 h-10 text-primary" />
+                  <div className="relative w-full h-full p-2">
+                     <img src="/images/globe-avatar.png" alt="Admin" className="w-full h-full object-contain" />
+                  </div>
                 )}
               </div>
               <div className="text-left">
