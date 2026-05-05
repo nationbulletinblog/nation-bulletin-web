@@ -70,7 +70,7 @@ export const Footer = async () => {
           {/* Column 4: Paid Opportunity */}
           <div className="border-l border-zinc-800 md:pl-12">
             <div className="p-5 bg-zinc-800/50 border border-zinc-700 rounded-lg space-y-3">
-               <h5 className="text-[12px] font-black uppercase tracking-[0.2em] text-[#ff3333] border-l-2 border-[#ff3333] pl-3 mb-4">
+               <h5 className="text-[13px] font-black uppercase tracking-[0.25em] text-[#ff0000] mb-4">
                  {settings?.paidContentTitle || "Paid Content Opportunity"}
                </h5>
                 <p className="text-[13px] leading-relaxed font-medium !text-white opacity-90">
