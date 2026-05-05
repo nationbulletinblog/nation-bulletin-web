@@ -4,6 +4,14 @@ import { blogSubmissionSchema, BlogSubmission } from '@/lib/validation'
 import { revalidatePath } from 'next/cache'
 import { htmlToPortableText } from '@/lib/portableText'
 
+const slugify = (text: string) => 
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .slice(0, 96)
+
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 
@@ -61,7 +69,7 @@ export async function submitBlogPost(formData: FormData) {
       if (categoryDoc) {
         categoryRef = { _key: `cat-${crypto.randomUUID()}`, _type: 'reference', _ref: categoryDoc._id };
       } else {
-        const newCat = await writeClient.create({ _type: 'category', title: validatedData.category, slug: { _type: 'slug', current: validatedData.category.toLowerCase().replace(/\s+/g, '-') } });
+        const newCat = await writeClient.create({ _type: 'category', title: validatedData.category, slug: { _type: 'slug', current: slugify(validatedData.category) } });
         categoryRef = { _key: `cat-${crypto.randomUUID()}`, _type: 'reference', _ref: newCat._id };
       }
     }
@@ -72,7 +80,7 @@ export async function submitBlogPost(formData: FormData) {
       for (const tagTitle of validatedData.tags) {
         let tagDoc = await writeClient.fetch(`*[_type == "tag" && title == $title][0]`, { title: tagTitle });
         if (!tagDoc) {
-          tagDoc = await writeClient.create({ _type: 'tag', title: tagTitle, slug: { _type: 'slug', current: tagTitle.toLowerCase().replace(/\s+/g, '-') } });
+          tagDoc = await writeClient.create({ _type: 'tag', title: tagTitle, slug: { _type: 'slug', current: slugify(tagTitle) } });
         }
         tagRefs.push({ _key: `tag-${crypto.randomUUID()}`, _type: 'reference', _ref: tagDoc._id });
       }
@@ -87,11 +95,9 @@ export async function submitBlogPost(formData: FormData) {
       title: validatedData.title,
       slug: {
         _type: 'slug',
-        current: validatedData.title
-          .toLowerCase()
-          .replace(/\s+/g, '-')
-          .slice(0, 96),
+        current: slugify(validatedData.title),
       },
+      publishedAt: new Date().toISOString(),
       body: bodyBlocks,
       author: author ? { _type: 'reference', _ref: author._id } : undefined,
       authorInfo: {
@@ -119,6 +125,8 @@ export async function submitBlogPost(formData: FormData) {
     })
 
     revalidatePath('/')
+    revalidatePath('/blog')
+    revalidatePath('/category/[slug]', 'page')
     return { success: true, message: 'Your blog post has been submitted for review!' }
   } catch (error) {
     console.error('Submission error:', error)
