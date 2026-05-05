@@ -26,9 +26,9 @@ export async function generateMetadata(): Promise<Metadata> {
       canonical: './',
     },
     icons: {
-      icon: '/images/globe-avatar.png',
-      shortcut: '/images/globe-avatar.png',
-      apple: '/images/globe-avatar.png',
+      icon: '/favicon-globe.png',
+      shortcut: '/favicon-globe.png',
+      apple: '/favicon-globe.png',
     },
   };
 }
