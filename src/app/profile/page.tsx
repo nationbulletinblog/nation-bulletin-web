@@ -122,55 +122,35 @@ export default function ProfilePage() {
                {session && <SubmissionForm session={session} />}
             </div>
 
-            {/* Secondary: Past Articles & Stats */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-1 px-1 bg-border border border-border">
-              {/* Recent Activity */}
-              <div className="lg:col-span-8 bg-background p-10 md:p-14">
-                  <div className="flex items-center justify-between mb-12 border-b border-border pb-6">
-                    <h2 className="text-3xl font-black capitalize tracking-tighter">My Articles</h2>
-                    <Link href="/blog" className="text-meta text-zinc-400 hover:text-primary transition-colors flex items-center gap-2">
-                        View Entire Archive <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  </div>
+            {/* Secondary: Past Articles */}
+            <div className="bg-background p-10 md:p-14 border border-border shadow-sm">
+                <div className="flex items-center justify-between mb-12 border-b border-border pb-6">
+                  <h2 className="text-3xl font-black capitalize tracking-tighter">My Articles</h2>
+                  <Link href="/blog" className="text-meta text-zinc-400 hover:text-primary transition-colors flex items-center gap-2">
+                      View Entire Archive <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
 
-                  <div className="space-y-12">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="group flex flex-col md:flex-row gap-8 items-start">
-                          <div className="w-full md:w-48 aspect-video bg-muted flex-shrink-0" />
-                          <div>
-                            <div className="flex items-center space-x-3 text-meta text-primary mb-2">
-                                <span>Technology</span>
-                                <span className="text-zinc-300">Nov {10 + i}, 2023</span>
-                            </div>
-                            <h3 className="text-xl font-black capitalize italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
-                                Policy Shift: The New Ethics of Autonomous Systems
-                            </h3>
-                            <div className="mt-6 flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                                <span className="flex items-center gap-1.5"><TrendingUp className="w-3 h-3 text-primary" /> 1.4k Views</span>
-                                <span className="text-primary italic">Status: Published</span>
-                            </div>
+                <div className="space-y-12">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="group flex flex-col md:flex-row gap-8 items-start">
+                        <div className="w-full md:w-48 aspect-video bg-muted flex-shrink-0" />
+                        <div className="flex-grow">
+                          <div className="flex items-center space-x-3 text-meta text-primary mb-2">
+                              <span>Technology</span>
+                              <span className="text-zinc-300">Nov {10 + i}, 2023</span>
                           </div>
-                      </div>
-                    ))}
-                  </div>
-              </div>
-
-              {/* Performance Sidebar */}
-              <div className="lg:col-span-4 bg-background p-10 md:p-14 border-l border-border flex flex-col gap-16">
-                  <section>
-                    <h3 className="text-meta text-primary mb-8 border-b border-border pb-4 w-full block">Personal Stats</h3>
-                    <div className="grid grid-cols-2 gap-px bg-border border border-border">
-                        <div className="bg-background p-6">
-                          <p className="text-2xl font-black italic tracking-tighter uppercase mb-1">12</p>
-                          <p className="text-[10px] font-black text-zinc-400 tracking-widest uppercase">Articles</p>
-                        </div>
-                        <div className="bg-background p-6">
-                          <p className="text-2xl font-black italic tracking-tighter uppercase mb-1">42k</p>
-                          <p className="text-[10px] font-black text-zinc-400 tracking-widest uppercase">Reach</p>
+                          <h3 className="text-xl font-black capitalize italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
+                              Policy Shift: The New Ethics of Autonomous Systems
+                          </h3>
+                          <div className="mt-6 flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                              <span className="flex items-center gap-1.5"><TrendingUp className="w-3 h-3 text-primary" /> 1.4k Views</span>
+                              <span className="text-primary italic">Status: Published</span>
+                          </div>
                         </div>
                     </div>
-                  </section>
-              </div>
+                  ))}
+                </div>
             </div>
           </div>
         )}
