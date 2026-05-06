@@ -24,6 +24,7 @@ async function getPosts(limit: number) {
       name,
       image
     },
+    showAsAdmin,
     categories[]->{
       title
     }
@@ -120,7 +121,10 @@ export default async function Home() {
                   </div>
                   <div className="absolute bottom-12 left-12 right-12 z-20">
                     <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-300 mb-6">
-                      <span className="flex items-center gap-2 normal-case"><User className="w-4 h-4 text-primary" /> Admin</span>
+                      <span className="flex items-center gap-2 normal-case">
+                        <User className="w-4 h-4 text-primary" /> 
+                        {featuredPost.showAsAdmin !== false ? 'Admin' : (featuredPost.author?.name || 'Admin')}
+                      </span>
                       <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> {new Date(featuredPost.publishedAt).toLocaleDateString()}</span>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black text-white hover:text-primary transition-colors cursor-pointer leading-[0.95] mb-8 tracking-tighter">

@@ -15,12 +15,13 @@ interface PostCardProps {
     categories?: { title: string }[]
     mainImage?: any
     views?: string | number
+    showAsAdmin?: boolean
   }
 }
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const category = post.categories?.[0]?.title || 'General'
-  const authorName = 'Admin'
+  const authorName = post.showAsAdmin !== false ? 'Admin' : (post.author?.name || 'Admin')
   const date = new Date(post.publishedAt).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',

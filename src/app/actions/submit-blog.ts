@@ -49,16 +49,20 @@ export async function submitBlogPost(formData: FormData) {
       mainImageAssetId = asset._id;
     }
 
-    // 4. Resolve Author (Always publish as 'Admin')
-    let author = await writeClient.fetch(`*[_type == "author" && name == "Admin"][0]`)
+    // 4. Resolve Author (Real author in backend, masked on frontend)
+    const authorEmail = session.user?.email!
+    const authorName = session.user?.name || 'Contributor'
     
-    // If the Admin author doesn't exist yet, we can create it to prevent errors
+    let author = await writeClient.fetch(`*[_type == "author" && email == $email][0]`, { email: authorEmail })
+    
+    // If the author document doesn't exist for this user, create it
     if (!author) {
       author = await writeClient.create({
         _type: 'author',
-        name: 'Admin',
-        slug: { _type: 'slug', current: 'admin' },
-        bio: [{ _type: 'block', children: [{ _type: 'span', text: 'Platform Administrator' }] }]
+        name: authorName,
+        email: authorEmail,
+        slug: { _type: 'slug', current: slugify(authorName) },
+        bio: [{ _type: 'block', children: [{ _type: 'span', text: 'Contributor to Nation Bulletin' }] }]
       })
     }
 
@@ -100,10 +104,7 @@ export async function submitBlogPost(formData: FormData) {
       publishedAt: new Date().toISOString(),
       body: bodyBlocks,
       author: author ? { _type: 'reference', _ref: author._id } : undefined,
-      authorInfo: {
-        name: validatedData.authorName,
-        email: validatedData.authorEmail,
-      },
+      authorInfo: author ? { _type: 'reference', _ref: author._id } : undefined,
       categories: categoryRef ? [categoryRef] : undefined,
       tags: tagRefs.length > 0 ? tagRefs : undefined,
       mainImage: mainImageAssetId ? {

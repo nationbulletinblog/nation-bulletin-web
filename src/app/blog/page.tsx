@@ -25,6 +25,7 @@ async function getPosts() {
       name,
       image
     },
+    showAsAdmin,
     categories[]->{
       title
     }

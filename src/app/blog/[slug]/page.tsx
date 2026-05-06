@@ -22,6 +22,7 @@ async function getPost(slug: string) {
       image,
       bio
     },
+    showAsAdmin,
     categories[]->{
       title,
       "slug": slug.current
@@ -111,7 +112,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
           <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10 pt-4 border-t border-border mt-4">
              <div className="flex items-center gap-4">
                  <div className="w-10 h-10 flex items-center justify-center overflow-hidden relative">
-                    {post.author?.image ? (
+                    {post.showAsAdmin === false && post.author?.image ? (
                       <Image src={urlFor(post.author.image).url()} alt={post.author.name} fill sizes="40px" className="object-cover" />
                     ) : (
                       <div className="relative w-full h-full">
@@ -121,7 +122,9 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
                  </div>
                 <div>
                    <p className="text-[10px] font-bold uppercase tracking-widest !text-black">Written By</p>
-                   <p className="text-[12px] font-black normal-case tracking-tight !text-black">Admin</p>
+                   <p className="text-[12px] font-black normal-case tracking-tight !text-black">
+                      {post.showAsAdmin !== false ? 'Admin' : (post.author?.name || 'Admin')}
+                   </p>
                 </div>
              </div>
              
