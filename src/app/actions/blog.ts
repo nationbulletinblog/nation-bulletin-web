@@ -69,11 +69,11 @@ export async function fetchSiteSettings() {
     paidContentDescription,
     contactEmail
   }`;
-  const settings = await client.fetch(query);
+  const settings = await client.fetch(query, {}, { next: { revalidate: 60 } });
   return settings;
 }
 export async function fetchUserPosts(email: string) {
-  const query = `*[_type == "post" && (author->email == $email || authorInfo.email == $email)] | order(_createdAt desc) {
+  const query = `*[_type == "post" && (author->email == $email || authorInfo->email == $email)] | order(_createdAt desc) {
     _id,
     title,
     slug,

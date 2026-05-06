@@ -8,9 +8,7 @@ import { client } from "@/lib/sanity.client";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity.client";
 
-async function getSiteSettings() {
-  return await client.fetch(`*[_type == "siteSettings"][0]{ seoTitle, seoDescription }`);
-}
+import { fetchSiteSettings } from "@/app/actions/blog";
 
 async function getPosts(limit: number) {
   const query = `*[_type == "post"] | order(publishedAt desc) [0...${limit}] {
@@ -33,14 +31,14 @@ async function getPosts(limit: number) {
 }
 
 export async function generateMetadata() {
-  const settings = await getSiteSettings();
+  const settings = await fetchSiteSettings();
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
   return {
     title: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
     description: settings?.seoDescription || "Modern news and blog platform providing investigative insights and global narratives.",
     alternates: {
-      canonical: baseUrl,
+      canonical: '/',
     },
     openGraph: {
       title: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
@@ -50,7 +48,7 @@ export async function generateMetadata() {
       type: 'website',
       images: [
         {
-          url: `${baseUrl}/logo.png`,
+          url: '/logo.png',
           width: 800,
           height: 600,
           alt: 'Nation Bulletin Logo',
@@ -61,7 +59,7 @@ export async function generateMetadata() {
       card: 'summary_large_image',
       title: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
       description: settings?.seoDescription || "Modern news and blog platform.",
-      images: [`${baseUrl}/logo.png`],
+      images: ['/logo.png'],
     },
   };
 }

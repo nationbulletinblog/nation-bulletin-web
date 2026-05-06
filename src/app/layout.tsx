@@ -14,16 +14,17 @@ import { fetchSiteSettings } from "@/app/actions/blog";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await fetchSiteSettings();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
+    metadataBase: new URL(baseUrl),
     title: {
       default: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
       template: "%s | Nation Bulletin"
     },
     description: settings?.seoDescription || "A professional blog for the modern era, delivering curated news and trending stories.",
     alternates: {
-      canonical: './',
+      canonical: '/',
     },
     icons: {
       icon: '/favicon-globe.png',
