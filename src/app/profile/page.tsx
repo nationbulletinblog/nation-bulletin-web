@@ -118,7 +118,7 @@ export default function ProfilePage() {
               onCancel={() => setIsEditing(false)}
               onSuccess={() => {
                 setIsEditing(false)
-                fetchAuthorData()
+                fetchData()
               }}
             />
           </div>
