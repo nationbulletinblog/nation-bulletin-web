@@ -35,7 +35,7 @@ export async function generateMetadata() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
   return {
-    title: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
+    title: settings?.seoTitle || "Nation Bulletin (Fallback)",
     description: settings?.seoDescription || "Modern news and blog platform providing investigative insights and global narratives.",
     alternates: {
       canonical: '/',

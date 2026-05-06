@@ -18,10 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   
   return {
     metadataBase: new URL(baseUrl),
-    title: {
-      default: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
-      template: "%s | Nation Bulletin"
-    },
+    title: settings?.seoTitle || "Nation Bulletin (Fallback)",
     description: settings?.seoDescription || "A professional blog for the modern era, delivering curated news and trending stories.",
     alternates: {
       canonical: '/',
