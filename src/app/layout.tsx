@@ -12,6 +12,8 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", weight: [
 
 import { fetchSiteSettings } from "@/app/actions/blog";
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await fetchSiteSettings();
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
