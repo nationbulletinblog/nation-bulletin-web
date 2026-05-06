@@ -348,8 +348,8 @@ export const SubmissionForm = ({ session, onSuccess }: { session: Session; onSuc
                <span className="w-1 h-1 bg-primary rounded-full"></span>
                {(() => {
                  const content = watch('content') || '';
-                 const text = content.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&[a-z0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
-                 const count = text.split(/\s+/).filter(word => word.length > 0).length;
+                 const text = content.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&[a-z0-9]+;/gi, ' ');
+                 const count = (text.match(/\S+/g) || []).length;
                  return `Word Count: ${count} / Minimum: 800`;
                })()}
              </span>
