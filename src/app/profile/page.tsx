@@ -9,27 +9,32 @@ import { client } from '@/lib/sanity.client'
 import { EditProfileForm } from '@/components/EditProfileForm'
 import { urlFor } from '@/lib/sanity.client'
 import { SubmissionForm } from '@/components/SubmissionForm'
-import { fetchAuthorByEmail } from '@/app/actions/blog'
+import { fetchAuthorByEmail, fetchUserPosts } from '@/app/actions/blog'
 
 export default function ProfilePage() {
   const { data: session, status } = useSession()
   const [isEditing, setIsEditing] = useState(false)
   const [authorData, setAuthorData] = useState<any>(null)
+  const [userPosts, setUserPosts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
     if (session?.user?.email) {
-      fetchAuthorData()
+      fetchData()
     }
   }, [session])
 
-  const fetchAuthorData = async () => {
+  const fetchData = async () => {
     try {
-      const data = await fetchAuthorByEmail(session?.user?.email!)
-      setAuthorData(data)
+      const [author, posts] = await Promise.all([
+        fetchAuthorByEmail(session?.user?.email!),
+        fetchUserPosts(session?.user?.email!)
+      ])
+      setAuthorData(author)
+      setUserPosts(posts)
     } catch (error) {
-      console.error('Error fetching author data:', error)
+      console.error('Error fetching profile data:', error)
     } finally {
       setLoading(false)
     }
@@ -121,39 +126,63 @@ export default function ProfilePage() {
           <div className="flex flex-col gap-16">
             {/* Primary Action: Direct Submission Form */}
             <div className="max-w-4xl mx-auto w-full">
-               {session && <SubmissionForm session={session} />}
+               {session && <SubmissionForm session={session} onSuccess={fetchData} />}
             </div>
 
             {/* Secondary: Past Articles */}
-            <div className="bg-background p-10 md:p-14 border border-border shadow-sm">
-                <div className="flex items-center justify-between mb-12 border-b border-border pb-6">
-                  <h2 className="text-3xl font-black capitalize tracking-tighter">My Articles</h2>
-                  <Link href="/blog" className="text-meta text-zinc-400 hover:text-primary transition-colors flex items-center gap-2">
-                      View Entire Archive <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-
-                <div className="space-y-12">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="group flex flex-col md:flex-row gap-8 items-start">
-                        <div className="w-full md:w-48 aspect-video bg-muted flex-shrink-0" />
-                        <div className="flex-grow">
-                          <div className="flex items-center space-x-3 text-meta text-primary mb-2">
-                              <span>Technology</span>
-                              <span className="text-zinc-300">Nov {10 + i}, 2023</span>
+            {userPosts.length > 0 && (
+              <div className="bg-background p-10 md:p-14 border border-border shadow-sm">
+                  <div className="flex items-center justify-between mb-12 border-b border-border pb-6">
+                    <h2 className="text-3xl font-black capitalize tracking-tighter">My Articles</h2>
+                    <Link href="/blog" className="text-meta text-zinc-400 hover:text-primary transition-colors flex items-center gap-2">
+                        View All Blogs <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+  
+                  <div className="space-y-12">
+                    {userPosts.map((post: any) => (
+                      <div key={post._id} className="group flex flex-col md:flex-row gap-8 items-start">
+                          <div className="w-full md:w-48 aspect-video bg-muted flex-shrink-0 relative overflow-hidden">
+                             {post.mainImage ? (
+                               <img 
+                                 src={urlFor(post.mainImage).url()} 
+                                 alt={post.title} 
+                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                               />
+                             ) : (
+                               <div className="w-full h-full bg-zinc-100 flex items-center justify-center">
+                                 <Globe className="w-8 h-8 text-zinc-300" />
+                               </div>
+                             )}
                           </div>
-                          <h3 className="text-xl font-black capitalize italic tracking-tighter leading-tight group-hover:text-primary transition-colors">
-                              Policy Shift: The New Ethics of Autonomous Systems
-                          </h3>
-                          <div className="mt-6 flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                              <span className="flex items-center gap-1.5"><TrendingUp className="w-3 h-3 text-primary" /> 1.4k Views</span>
-                              <span className="text-primary italic">Status: Published</span>
+                          <div className="flex-grow">
+                            <div className="flex items-center space-x-3 text-meta text-primary mb-2">
+                                <span>{post.categories?.[0]?.title || 'General'}</span>
+                                <span className="text-zinc-300">
+                                  {new Date(post.publishedAt || post._createdAt).toLocaleDateString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                  })}
+                                </span>
+                            </div>
+                            <Link href={`/blog/${post.slug?.current || '#'}`}>
+                              <h3 className="text-xl font-black capitalize italic tracking-tighter leading-tight group-hover:text-primary transition-colors cursor-pointer">
+                                  {post.title}
+                              </h3>
+                            </Link>
+                            <div className="mt-6 flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                                <span className="flex items-center gap-1.5"><TrendingUp className="w-3 h-3 text-primary" /> 0 Views</span>
+                                <span className={`${post.status === 'Draft' ? 'text-zinc-400' : 'text-primary'} italic`}>
+                                  Status: {post.status}
+                                </span>
+                            </div>
                           </div>
-                        </div>
-                    </div>
-                  ))}
-                </div>
-            </div>
+                      </div>
+                    ))}
+                  </div>
+              </div>
+            )}
           </div>
         )}
       </div>

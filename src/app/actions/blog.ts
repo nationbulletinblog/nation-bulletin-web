@@ -72,3 +72,22 @@ export async function fetchSiteSettings() {
   const settings = await client.fetch(query);
   return settings;
 }
+export async function fetchUserPosts(email: string) {
+  const query = `*[_type == "post" && (author->email == $email || authorInfo.email == $email)] | order(_createdAt desc) {
+    _id,
+    title,
+    slug,
+    publishedAt,
+    _createdAt,
+    mainImage,
+    categories[]->{
+      title
+    },
+    "status": select(
+      _id in path("drafts.**") => "Draft",
+      "Published"
+    )
+  }`;
+  const posts = await client.fetch(query, { email });
+  return posts;
+}

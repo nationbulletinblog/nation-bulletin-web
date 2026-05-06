@@ -12,13 +12,13 @@ import { client } from '@/lib/sanity.client'
 import { Upload, X, Check, AlertCircle, Image as ImageIcon, Send, Type, Hash, Layers } from 'lucide-react'
 import { Session } from 'next-auth'
 
-// Dynamic import for React Quill to prevent SSR issues
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false })
 import 'react-quill-new/dist/quill.snow.css'
-
-export const SubmissionForm = ({ session }: { session: Session }) => {
+import { Turnstile } from '@marsidev/react-turnstile'
+export const SubmissionForm = ({ session, onSuccess }: { session: Session; onSuccess?: () => void }) => {
   const [categories, setCategories] = useState<{ value: string; label: string }[]>([])
   const [tags, setTags] = useState<{ value: string; label: string }[]>([])
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [status, setStatus] = useState<{ type: 'idle' | 'loading' | 'success' | 'error'; message: string }>({
     type: 'idle',
     message: '',
@@ -80,6 +80,10 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
   }
 
   const onSubmit = async (data: BlogSubmission) => {
+    if (!turnstileToken) {
+      setStatus({ type: 'error', message: 'Please complete the security check.' })
+      return
+    }
     setStatus({ type: 'loading', message: 'Preparing your article for review...' })
     
     const formData = new FormData()
@@ -103,6 +107,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
       setStatus({ type: 'success', message: 'Thank you! Your article has been received. Our editorial team will review it shortly.' })
       reset()
       setPreviewImage(null)
+      if (onSuccess) onSuccess()
     } else {
       setStatus({ type: 'error', message: result.message })
     }
@@ -174,7 +179,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
       <div className="absolute top-0 left-0 w-full h-1 bg-primary/20"></div>
       
       <div className="mb-10 text-left">
-         <h2 className="text-2xl font-black tracking-tight text-zinc-900 mb-2">Editorial Console</h2>
+         <h2 className="text-2xl font-black tracking-tight text-zinc-900 mb-2">Submit Your Article</h2>
          <p className="text-sm font-medium text-zinc-500">Provide your article details below for editorial review.</p>
       </div>
 
@@ -182,7 +187,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
         {/* Author Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Full Name</label>
+            <label className="text-[11px] font-black uppercase tracking-widest text-zinc-900 ml-1">Full Name</label>
             <input
               {...register('authorName')}
               placeholder="e.g. John Doe"
@@ -191,7 +196,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Email Address</label>
+            <label className="text-[11px] font-black uppercase tracking-widest text-zinc-900 ml-1">Email Address</label>
             <input
               {...register('authorEmail')}
               placeholder="name@company.com"
@@ -202,7 +207,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
 
         {/* Headline */}
         <div className="space-y-2">
-          <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Article Headline</label>
+          <label className="text-[11px] font-black uppercase tracking-widest text-zinc-900 ml-1">Article Headline</label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <Type className="h-4 w-4 text-zinc-400 group-focus-within:text-primary transition-colors" />
@@ -219,7 +224,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
         {/* Categorization */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
            <div className="space-y-2">
-            <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Category</label>
+            <label className="text-[11px] font-black uppercase tracking-widest text-zinc-900 ml-1">Category</label>
             <Controller
               name="category"
               control={control}
@@ -237,7 +242,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Tags</label>
+            <label className="text-[11px] font-black uppercase tracking-widest text-zinc-900 ml-1">Tags</label>
             <Controller
               name="tags"
               control={control}
@@ -258,7 +263,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
 
         {/* Featured Image */}
         <div className="space-y-2">
-          <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Featured Image</label>
+          <label className="text-[11px] font-black uppercase tracking-widest text-zinc-900 ml-1">Featured Image</label>
           <div className={`relative border-2 border-dashed rounded-2xl transition-all duration-300 ${previewImage ? 'border-primary' : 'border-zinc-200 hover:border-primary'}`}>
              {previewImage ? (
                 <div className="relative aspect-video w-full group overflow-hidden rounded-2xl">
@@ -283,9 +288,10 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
              )}
           </div>
         
+
         {/* Image Alt Text */}
         <div className="space-y-2">
-          <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Image Alt Text (SEO)</label>
+          <label className="text-[11px] font-black uppercase tracking-widest text-zinc-900 ml-1">Image Alt Text (SEO)</label>
           <input
             {...register('imageAlt')}
             placeholder="Describe the image for accessibility and SEO..."
@@ -297,7 +303,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
         {/* SEO Metadata */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-zinc-100">
            <div className="space-y-2">
-             <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Meta Title</label>
+             <label className="text-[11px] font-black uppercase tracking-widest text-zinc-900 ml-1">Meta Title</label>
              <input
                {...register('seoTitle')}
                placeholder="e.g. 5 Ways Technology is Changing Education..."
@@ -306,7 +312,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
            </div>
 
            <div className="space-y-2">
-             <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Meta Description</label>
+             <label className="text-[11px] font-black uppercase tracking-widest text-zinc-900 ml-1">Meta Description</label>
              <textarea
                {...register('seoDescription')}
                placeholder="Write a compelling description for search engines..."
@@ -318,14 +324,7 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
 
         {/* Content Editor */}
         <div className="space-y-2">
-          <div className="flex justify-between items-end ml-1">
-            <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Article Content</label>
-            <div className="flex gap-4 text-[9px] font-bold uppercase tracking-tight text-zinc-400">
-               <span>Min 800 Words</span>
-               <span>Max 1 Link</span>
-               <span className="text-primary/70">No Adult/Gambling</span>
-            </div>
-          </div>
+          <label className="text-[11px] font-black uppercase tracking-widest text-zinc-900 ml-1">Article Content</label>
           <div className="editorial-editor transition-all focus-within:border-primary border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
             <Controller
               name="content"
@@ -336,12 +335,36 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
                   modules={quillModules}
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Share your story with the world..."
+                  placeholder="Start writing your article here..."
                 />
               )}
             />
           </div>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-[9px] font-black uppercase tracking-tight text-primary mt-3 ml-1">
+             <span className="flex items-center gap-1.5">
+               <span className="w-1 h-1 bg-primary rounded-full"></span>
+               The content must be a minimum of 800 words.
+             </span>
+             <span className="flex items-center gap-1.5">
+               <span className="w-1 h-1 bg-primary rounded-full"></span>
+               Only one do-follow link is allowed in the content.
+             </span>
+             <span className="flex items-center gap-1.5">
+               <span className="w-1 h-1 bg-primary rounded-full"></span>
+               Adult and gambling-related content are strictly prohibited.
+             </span>
+          </div>
           {errors.content && <p className="text-primary text-[10px] font-bold mt-1 uppercase tracking-tight">{errors.content.message}</p>}
+        </div>
+
+        <div className="py-4 border-t border-zinc-100 flex justify-center">
+          <Turnstile
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            onSuccess={(token) => setTurnstileToken(token)}
+            options={{
+              theme: 'light',
+            }}
+          />
         </div>
 
         <div className="pt-6 border-t border-zinc-100">

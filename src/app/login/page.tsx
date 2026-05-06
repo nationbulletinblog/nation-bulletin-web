@@ -5,39 +5,26 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Mail, Lock, ArrowRight, ShieldCheck, Globe } from 'lucide-react'
+import { Turnstile } from '@marsidev/react-turnstile'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [captchaParams, setCaptchaParams] = useState({ a: 0, b: 0 })
-  const [captchaAnswer, setCaptchaAnswer] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const router = useRouter()
-
-  React.useEffect(() => {
-    generateCaptcha()
-  }, [])
-
-  const generateCaptcha = () => {
-    setCaptchaParams({
-      a: Math.floor(Math.random() * 10) + 1,
-      b: Math.floor(Math.random() * 10) + 1
-    })
-    setCaptchaAnswer('')
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    setError('')
-
-    if (parseInt(captchaAnswer) !== captchaParams.a + captchaParams.b) {
-      setError('Incorrect security question answer.')
-      setLoading(false)
-      generateCaptcha()
+    
+    if (!turnstileToken) {
+      setError('Please complete the security check.')
       return
     }
+
+    setLoading(true)
+    setError('')
 
     const result = await signIn('credentials', {
       redirect: false,
@@ -82,7 +69,7 @@ export default function LoginPage() {
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Email Address</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900 ml-1">Email Address</label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <Mail className="h-4 w-4 text-zinc-400 group-focus-within:text-primary transition-colors" />
@@ -100,7 +87,7 @@ export default function LoginPage() {
 
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center ml-1">
-                   <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Password</label>
+                   <label className="text-[10px] font-black uppercase tracking-widest text-zinc-900">Password</label>
                    <Link href="#" className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline">Forgot?</Link>
                 </div>
                 <div className="relative group">
@@ -118,17 +105,13 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">
-                  Security Check: What is {captchaParams.a} + {captchaParams.b}?
-                </label>
-                <input
-                  type="number"
-                  required
-                  className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none text-sm transition-all duration-300"
-                  placeholder="Your Answer"
-                  value={captchaAnswer}
-                  onChange={(e) => setCaptchaAnswer(e.target.value)}
+              <div className="space-y-1.5 pt-2">
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  options={{
+                    theme: 'light',
+                  }}
                 />
               </div>
             </div>
