@@ -10,8 +10,14 @@ export const blogSubmissionSchema = z.object({
   content: z.string()
     .min(100, 'Content is too short')
     .refine((html) => {
-      // Strip HTML tags to get actual text content
-      const text = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+      // Strip HTML tags and handle common entities
+      const text = html
+        .replace(/<[^>]*>/g, ' ') // Replace tags with spaces
+        .replace(/&nbsp;/g, ' ')  // Handle non-breaking spaces
+        .replace(/&[a-z0-9]+;/gi, ' ') // Handle other entities
+        .replace(/\s+/g, ' ')      // Collapse all whitespace
+        .trim();
+      
       const wordCount = text.split(/\s+/).filter(word => word.length > 0).length;
       return wordCount >= 800;
     }, {

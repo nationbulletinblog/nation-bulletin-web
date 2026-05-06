@@ -345,18 +345,27 @@ export const SubmissionForm = ({ session, onSuccess }: { session: Session; onSuc
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-[9px] font-black uppercase tracking-tight text-primary mt-3 ml-1">
              <span className="flex items-center gap-1.5">
                <span className="w-1 h-1 bg-primary rounded-full"></span>
-               The content must be a minimum of 800 words.
+               {(() => {
+                 const content = watch('content') || '';
+                 const text = content.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&[a-z0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
+                 const count = text.split(/\s+/).filter(word => word.length > 0).length;
+                 return `Word Count: ${count} / Minimum: 800`;
+               })()}
              </span>
              <span className="flex items-center gap-1.5">
                <span className="w-1 h-1 bg-primary rounded-full"></span>
-               Only one do-follow link is allowed in the content.
+               Minimum 800 words required.
+             </span>
+             <span className="flex items-center gap-1.5">
+               <span className="w-1 h-1 bg-primary rounded-full"></span>
+               Maximum 1 do-follow link allowed.
              </span>
              <span className="flex items-center gap-1.5">
                <span className="w-1 h-1 bg-primary rounded-full"></span>
                Adult and gambling-related content are strictly prohibited.
              </span>
           </div>
-          {errors.content && <p className="text-primary text-[10px] font-bold mt-1 uppercase tracking-tight">{errors.content.message}</p>}
+          {errors.content && <p className="text-primary text-[10px] font-bold mt-1 uppercase tracking-tight ml-1">{errors.content.message}</p>}
         </div>
 
         <div className="py-4 border-t border-zinc-100 flex justify-center">
