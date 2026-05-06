@@ -22,6 +22,28 @@ export async function submitBlogPost(formData: FormData) {
       return { success: false, message: 'Unauthorized. Please login to submit.' }
     }
 
+    // 0. Verify Turnstile Token
+    const turnstileToken = formData.get('turnstileToken') as string;
+    if (!turnstileToken) {
+      return { success: false, message: 'Security verification failed. Please try again.' }
+    }
+
+    const verifyResponse = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `secret=${process.env.TURNSTILE_SECRET_KEY}&response=${turnstileToken}`,
+      }
+    );
+
+    const verifyData = await verifyResponse.json();
+    if (!verifyData.success) {
+      return { success: false, message: 'Security check failed. Please refresh and try again.' }
+    }
+
     // 1. Reconstruct data from FormData
     const data: any = {
       title: formData.get('title'),
@@ -117,6 +139,7 @@ export async function submitBlogPost(formData: FormData) {
       } : undefined,
       seoTitle: validatedData.seoTitle,
       seoDescription: validatedData.seoDescription,
+      showAsAdmin: true,
     }
 
     // Use drafts. prefix to ensure it doesn't appear on the site until published
@@ -128,9 +151,15 @@ export async function submitBlogPost(formData: FormData) {
     revalidatePath('/')
     revalidatePath('/blog')
     revalidatePath('/category/[slug]', 'page')
-    return { success: true, message: 'Your blog post has been submitted for review!' }
-  } catch (error) {
+    return { success: true, message: 'Your blog post has been received and is now under review!' }
+  } catch (error: any) {
     console.error('Submission error:', error)
-    return { success: false, message: 'Something went wrong. Please try again later.' }
+    
+    if (error.name === 'ZodError') {
+      const messages = error.errors.map((err: any) => err.message).join('. ')
+      return { success: false, message: messages }
+    }
+    
+    return { success: false, message: error.message || 'Something went wrong. Please try again later.' }
   }
 }

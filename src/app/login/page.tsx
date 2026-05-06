@@ -30,6 +30,7 @@ export default function LoginPage() {
       redirect: false,
       email,
       password,
+      turnstileToken,
     })
 
     if (result?.error) {

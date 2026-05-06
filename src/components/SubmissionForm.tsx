@@ -100,6 +100,8 @@ export const SubmissionForm = ({ session, onSuccess }: { session: Session; onSuc
     if (data.mainImage) {
       formData.append('mainImage', data.mainImage as Blob)
     }
+    
+    formData.append('turnstileToken', turnstileToken)
 
     const result = await submitBlogPost(formData as any)
 

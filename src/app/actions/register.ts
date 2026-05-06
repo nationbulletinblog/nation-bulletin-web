@@ -7,11 +7,33 @@ export async function registerUser(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 
+  const turnstileToken = formData.get('turnstileToken') as string
+
   if (!name || !email || !password) {
     return { success: false, message: 'Missing fields' }
   }
 
+  // Verify Turnstile Token
+  if (!turnstileToken) {
+    return { success: false, message: 'Security verification failed' }
+  }
+
   try {
+    const verifyResponse = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `secret=${process.env.TURNSTILE_SECRET_KEY}&response=${turnstileToken}`,
+      }
+    );
+
+    const verifyData = await verifyResponse.json();
+    if (!verifyData.success) {
+      return { success: false, message: 'Security check failed. Please try again.' }
+    }
     // 1. Check if user already exists
     const existingUser = await writeClient.fetch(
       `*[_type == "author" && email == $email][0]`,
