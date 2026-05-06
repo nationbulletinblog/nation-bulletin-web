@@ -1,6 +1,6 @@
 'use server'
 
-import { client } from '@/lib/sanity.client'
+import { client, writeClient } from '@/lib/sanity.client'
 
 export async function fetchPosts(offset: number, limit: number, categorySlug?: string, searchQuery?: string) {
   let filter = `*[_type == "post"`
@@ -71,7 +71,7 @@ export async function fetchSiteSettings() {
     paidContentDescription,
     contactEmail
   }`;
-  const settings = await client.fetch(query, {}, { cache: 'no-store' });
+  const settings = await writeClient.fetch(query, {}, { cache: 'no-store' });
   return settings;
 }
 
