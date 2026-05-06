@@ -48,6 +48,7 @@ export const SubmissionForm = ({ session, onSuccess }: { session: Session; onSuc
     reset,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<BlogSubmission>({
     resolver: zodResolver(blogSubmissionSchema),
     defaultValues: {
