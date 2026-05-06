@@ -61,16 +61,7 @@ export async function fetchAuthorByEmail(email: string) {
 }
 
 export async function fetchSiteSettings() {
-  const query = `*[_type == "siteSettings" && _id in ["siteSettings", "drafts.siteSettings"]] | order(_updatedAt desc)[0] {
-    title,
-    description,
-    seoTitle,
-    seoDescription,
-    footerAbout,
-    paidContentTitle,
-    paidContentDescription,
-    contactEmail
-  }`;
+  const query = `*[_id == "siteSettings" || _id == "drafts.siteSettings"] | order(_updatedAt desc)[0]`;
   const settings = await writeClient.fetch(query, {}, { cache: 'no-store' });
   return settings;
 }
