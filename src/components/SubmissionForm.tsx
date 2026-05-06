@@ -318,7 +318,14 @@ export const SubmissionForm = ({ session }: { session: Session }) => {
 
         {/* Content Editor */}
         <div className="space-y-2">
-          <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Article Content</label>
+          <div className="flex justify-between items-end ml-1">
+            <label className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">Article Content</label>
+            <div className="flex gap-4 text-[9px] font-bold uppercase tracking-tight text-zinc-400">
+               <span>Min 800 Words</span>
+               <span>Max 1 Link</span>
+               <span className="text-primary/70">No Adult/Gambling</span>
+            </div>
+          </div>
           <div className="editorial-editor transition-all focus-within:border-primary border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
             <Controller
               name="content"
