@@ -26,6 +26,7 @@ export async function fetchPosts(offset: number, limit: number, categorySlug?: s
       name,
       image
     },
+    showAsAdmin,
     categories[]->{
       title
     }
@@ -58,8 +59,9 @@ export async function fetchAuthorByEmail(email: string) {
   const author = await client.fetch(query, { email });
   return author;
 }
+
 export async function fetchSiteSettings() {
-  const query = `*[_type == "siteSettings"][0] {
+  const query = `*[_type == "siteSettings" && _id in ["siteSettings", "drafts.siteSettings"]] | order(_updatedAt desc)[0] {
     title,
     description,
     seoTitle,
@@ -69,9 +71,10 @@ export async function fetchSiteSettings() {
     paidContentDescription,
     contactEmail
   }`;
-  const settings = await client.fetch(query, {}, { next: { revalidate: 60 } });
+  const settings = await client.fetch(query, {}, { cache: 'no-store' });
   return settings;
 }
+
 export async function fetchUserPosts(email: string) {
   const query = `*[_type == "post" && (author->email == $email || authorInfo->email == $email)] | order(_createdAt desc) {
     _id,
