@@ -26,7 +26,6 @@ export async function fetchPosts(offset: number, limit: number, categorySlug?: s
       name,
       image
     },
-    showAsAdmin,
     categories[]->{
       title
     }
@@ -59,13 +58,20 @@ export async function fetchAuthorByEmail(email: string) {
   const author = await client.fetch(query, { email });
   return author;
 }
-
 export async function fetchSiteSettings() {
-  const query = `*[_id == "siteSettings" || _id == "drafts.siteSettings"] | order(_updatedAt desc)[0]`;
+  const query = `*[_id == "siteSettings" || _id == "drafts.siteSettings"] | order(_updatedAt desc)[0] {
+    title,
+    description,
+    seoTitle,
+    seoDescription,
+    footerAbout,
+    paidContentTitle,
+    paidContentDescription,
+    contactEmail
+  }`;
   const settings = await writeClient.fetch(query, {}, { cache: 'no-store' });
   return settings;
 }
-
 export async function fetchUserPosts(email: string) {
   const query = `*[_type == "post" && (author->email == $email || authorInfo->email == $email)] | order(_createdAt desc) {
     _id,

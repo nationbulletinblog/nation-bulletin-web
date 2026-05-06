@@ -7,6 +7,7 @@ import { BlogList } from "@/components/BlogList";
 import { client } from "@/lib/sanity.client";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity.client";
+
 import { fetchSiteSettings } from "@/app/actions/blog";
 
 export const dynamic = 'force-dynamic'
@@ -36,13 +37,13 @@ export async function generateMetadata() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
   return {
-    title: settings?.seoTitle || "Nation Bulletin (Pending CMS)",
-    description: settings?.seoDescription || "Modern news and blog platform.",
+    title: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
+    description: settings?.seoDescription || "Modern news and blog platform providing investigative insights and global narratives.",
     alternates: {
       canonical: '/',
     },
     openGraph: {
-      title: settings?.seoTitle || "Nation Bulletin (Pending CMS)",
+      title: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
       description: settings?.seoDescription || "Modern news and blog platform.",
       url: baseUrl,
       siteName: 'Nation Bulletin',
@@ -58,7 +59,7 @@ export async function generateMetadata() {
     },
     twitter: {
       card: 'summary_large_image',
-      title: settings?.seoTitle || "Nation Bulletin (Pending CMS)",
+      title: settings?.seoTitle || "Nation Bulletin | Stories & Insights",
       description: settings?.seoDescription || "Modern news and blog platform.",
       images: ['/logo.png'],
     },
@@ -66,123 +67,134 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const posts = await getPosts(10);
-  const settings = await fetchSiteSettings();
+  // Fetch 5 for hero + 12 for initial list = 17 posts
+  const posts = await getPosts(17);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   const featuredPost = posts[0];
-  const remainingPosts = posts.slice(1);
+  const sidePosts = posts.slice(1, 5);
+  const remainingPosts = posts.slice(5);
 
   return (
-    <div className="bg-[#F9F9F9] min-h-screen font-sans">
-      {/* Featured Section */}
-      {featuredPost && (
-        <section className="relative h-[600px] md:h-[700px] w-full overflow-hidden group">
-          {featuredPost.mainImage && (
-            <Image
-              src={urlFor(featuredPost.mainImage).url()}
-              alt={featuredPost.title}
-              fill
-              className="object-cover transition-transform duration-1000 group-hover:scale-105"
-              priority
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-900/60 to-transparent"></div>
-          
-          <div className="absolute inset-0 flex items-end">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 w-full">
-              <div className="max-w-3xl space-y-6">
-                <div className="flex flex-wrap items-center gap-4 text-white/80 text-xs font-bold uppercase tracking-[0.2em]">
-                  <span className="px-3 py-1 bg-primary text-white rounded-full">Featured Article</span>
-                  <span>{new Date(featuredPost.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-                </div>
-                
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight">
-                  {featuredPost.title}
-                </h1>
-                
-                <p className="text-lg md:text-xl text-zinc-300 font-medium line-clamp-2 max-w-2xl">
-                  {featuredPost.excerpt}
-                </p>
-                
-                <div className="flex items-center gap-6 pt-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20">
-                      {featuredPost.showAsAdmin !== false ? (
-                        <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
-                          <Image src="/favicon-globe.png" alt="Admin" width={24} height={24} className="opacity-50" />
-                        </div>
-                      ) : featuredPost.author?.image ? (
-                        <Image
-                          src={urlFor(featuredPost.author.image).url()}
-                          alt={featuredPost.author.name}
-                          width={48}
-                          height={48}
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-white font-bold">
-                          {featuredPost.author?.name?.charAt(0) || 'A'}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <div className="text-white font-bold text-sm tracking-tight">
+    <div className="bg-background min-h-screen">
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Nation Bulletin",
+            "url": baseUrl,
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": `${baseUrl}/search?q={search_term_string}`,
+              "query-input": "required name=search_term_string"
+            }
+          })
+        }}
+      />
+
+      {/* Bento Feature Grid */}
+      <section className="py-12 border-b border-border">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
+            {/* Primary Feature (Left - 7 Cols) */}
+            {featuredPost && (
+              <div className="lg:col-span-7 relative group overflow-hidden bg-slate-900 shadow-2xl min-h-[400px] md:min-h-[600px]">
+                <Link href={`/blog/${featuredPost.slug.current}`} className="relative block w-full h-full">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
+                  {featuredPost.mainImage ? (
+                    <Image
+                      src={urlFor(featuredPost.mainImage).url()}
+                      alt={featuredPost.mainImage.alt || featuredPost.title}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 70vw"
+                      className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-zinc-800" />
+                  )}
+                  <div className="absolute top-8 left-8 z-20">
+                    <span className="px-5 py-2 bg-primary text-white text-xs font-black uppercase tracking-[0.2em]">
+                      {featuredPost.categories?.[0]?.title || 'Latest Investigation'}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-12 left-12 right-12 z-20">
+                    <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-300 mb-6">
+                      <span className="flex items-center gap-2 normal-case">
+                        <User className="w-4 h-4 text-primary" /> 
                         {featuredPost.showAsAdmin !== false ? 'Admin' : (featuredPost.author?.name || 'Admin')}
-                      </div>
-                      <div className="text-white/60 text-[10px] font-black uppercase tracking-widest">Lead Editor</div>
+                      </span>
+                      <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> {new Date(featuredPost.publishedAt).toLocaleDateString()}</span>
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-black text-white hover:text-primary transition-colors cursor-pointer leading-[0.95] mb-8 tracking-tighter">
+                      {featuredPost.title}
+                    </h1>
+                    <div className="inline-flex items-center gap-3 text-xs font-black uppercase tracking-widest text-white border-b-2 border-primary pb-2 hover:gap-5 transition-all">
+                      Read Full Blog <ArrowRight className="w-5 h-5" />
                     </div>
                   </div>
-                  
-                  <Link 
-                    href={`/blog/${featuredPost.slug.current}`}
-                    className="flex items-center gap-2 px-8 py-4 bg-white text-zinc-950 rounded-full font-black text-sm uppercase tracking-widest hover:bg-primary hover:text-white transition-all group/btn shadow-2xl"
-                  >
-                    Read Story
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-                  </Link>
+                </Link>
+              </div>
+            )}
+
+            {/* Secondary Grid (Right - 5 Cols) */}
+            <div className="lg:col-span-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {sidePosts.map((post: any) => (
+                <div key={post._id} className="relative group overflow-hidden bg-zinc-900 border border-border/10">
+                   <Link href={`/blog/${post.slug.current}`} className="relative block w-full h-full min-h-[200px]">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent z-10" />
+                    {post.mainImage ? (
+                      <Image
+                        src={urlFor(post.mainImage).url()}
+                        alt={post.mainImage.alt || post.title}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-zinc-800" />
+                    )}
+                    <div className="absolute top-4 left-4 z-20">
+                      <span className="px-3 py-1 bg-primary text-white text-[9px] font-black uppercase tracking-widest">
+                        {post.categories?.[0]?.title}
+                      </span>
+                    </div>
+                    <div className="absolute bottom-6 left-6 right-6 z-20">
+                      <h2 className="text-sm font-black text-white group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                        {post.title}
+                      </h2>
+                    </div>
+                   </Link>
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Main Feed */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* Main Content */}
-          <div className="lg:col-span-8 space-y-16">
-            <div className="flex items-end justify-between border-b-2 border-zinc-900/5 pb-6">
-              <div>
-                <div className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-2">The Latest News</div>
-                <h2 className="text-4xl md:text-5xl font-black text-zinc-950 tracking-tighter">Recent Stories</h2>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
-              {remainingPosts.map((post: any) => (
-                <PostCard key={post._id} post={post} />
               ))}
-            </div>
 
-            <div className="flex justify-center pt-8">
-              <Link 
-                href="/blog"
-                className="inline-flex items-center gap-3 px-10 py-5 bg-zinc-950 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-primary transition-all group shadow-xl"
-              >
-                View Archive
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-              </Link>
             </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-4">
-             <div className="sticky top-28">
-               <Sidebar settings={settings} />
-             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Main Content Feed */}
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col lg:flex-row gap-16">
+            {/* Left Content Area (9/12 Cols = 75%) */}
+            <div className="lg:w-3/4">
+               <div className="flex items-center justify-between border-b-2 border-primary pb-6 mb-12">
+                  <h2 className="text-2xl font-black tracking-tighter">OUR LATEST BLOGS</h2>
+               </div>
+
+               {/* Load More List */}
+               <BlogList initialPosts={remainingPosts} initialOffset={5} />
+            </div>
+
+            {/* Right Sidebar Area (3/12 Cols = 25%) */}
+            <div className="lg:w-1/4">
+                <Sidebar />
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

@@ -26,11 +26,7 @@ async function getSidebarData() {
   return { categories, popularPosts };
 }
 
-interface SidebarProps {
-  settings?: any;
-}
-
-export const Sidebar = async ({ settings }: SidebarProps) => {
+export const Sidebar = async () => {
   const { categories, popularPosts } = await getSidebarData();
 
   return (
@@ -75,27 +71,7 @@ export const Sidebar = async ({ settings }: SidebarProps) => {
           ))}
         </div>
       </section>
-
-      {/* Paid Content Opportunity */}
-      <section className="bg-zinc-950 p-8 rounded-2xl relative overflow-hidden group shadow-2xl">
-         <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all"></div>
-         <div className="relative z-10">
-            <Globe className="w-8 h-8 text-primary mb-4" />
-            <h4 className="text-xl font-black text-white uppercase tracking-tight mb-2">
-              {settings?.paidContentTitle || 'Paid Content Opportunity'}
-            </h4>
-            <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-widest leading-relaxed mb-6">
-              {settings?.paidContentDescription || 'NationBulletin is a free guest posting platform that empowers writers, businesses, and creators to publish content, build authority & improve SEO.'}
-            </p>
-            <Link 
-              href="/submit" 
-              className="flex items-center justify-center gap-2 w-full py-4 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white hover:text-zinc-950 transition-all"
-            >
-              Get Started
-              <Send className="w-3 h-3" />
-            </Link>
-         </div>
-      </section>
     </aside>
+
   )
 }
