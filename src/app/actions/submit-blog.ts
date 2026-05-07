@@ -139,6 +139,7 @@ export async function submitBlogPost(formData: FormData) {
       } : undefined,
       seoTitle: validatedData.seoTitle,
       seoDescription: validatedData.seoDescription,
+      excerpt: validatedData.seoDescription, // Auto-fill excerpt from meta description
       showAsAdmin: true,
     }
 
