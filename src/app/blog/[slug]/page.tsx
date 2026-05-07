@@ -8,6 +8,14 @@ import { PortableBody } from '@/components/PortableBody'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
+export function formatViews(views: number | undefined | null) {
+  if (!views) return 0;
+  if (views >= 1000) {
+    return (views / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  }
+  return views;
+}
+
 async function getPost(slug: string) {
   const query = `*[_type == "post" && slug.current == $slug][0] {
     _id,
@@ -32,7 +40,8 @@ async function getPost(slug: string) {
       "slug": slug.current
     },
     seoTitle,
-    seoDescription
+    seoDescription,
+    views
   }`;
   const post = await client.fetch(query, { slug });
   return post;
@@ -133,7 +142,7 @@ export default async function BlogPostDetail({ params }: { params: Promise<{ slu
              <div className="flex flex-wrap items-center gap-4 sm:gap-8 text-[11px] font-black uppercase tracking-widest !text-black">
                 <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> {date}</span>
                 <span className="flex items-center gap-2 font-bold italic"><Clock className="w-4 h-4 text-primary" /> 12 MIN READ</span>
-                <span className="flex items-center gap-2"><Eye className="w-4 h-4 text-primary" /> {post.views || '1.2k'} VIEWS</span>
+                <span className="flex items-center gap-2"><Eye className="w-4 h-4 text-primary" /> {formatViews(post.views)} VIEWS</span>
              </div>
           </div>
         </div>

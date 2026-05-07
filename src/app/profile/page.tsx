@@ -11,6 +11,14 @@ import { urlFor } from '@/lib/sanity.client'
 import { SubmissionForm } from '@/components/SubmissionForm'
 import { fetchAuthorByEmail, fetchUserPosts } from '@/app/actions/blog'
 
+export function formatViews(views: number | undefined | null) {
+  if (!views) return 0;
+  if (views >= 1000) {
+    return (views / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  }
+  return views;
+}
+
 export default function ProfilePage() {
   const { data: session, status } = useSession()
   const [isEditing, setIsEditing] = useState(false)
@@ -172,8 +180,8 @@ export default function ProfilePage() {
                               </h3>
                             </Link>
                             <div className="mt-6 flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                                <span className="flex items-center gap-1.5"><TrendingUp className="w-3 h-3 text-primary" /> 0 Views</span>
-                                <span className={`${post.status === 'Draft' ? 'text-zinc-400' : 'text-primary'} italic`}>
+                                <span className="flex items-center gap-1.5"><TrendingUp className="w-3 h-3 text-primary" /> {formatViews(post.views)} Views</span>
+                                <span className={`${post.status === 'Under Approval' ? 'text-zinc-400' : 'text-primary'} italic`}>
                                   Status: {post.status}
                                 </span>
                             </div>

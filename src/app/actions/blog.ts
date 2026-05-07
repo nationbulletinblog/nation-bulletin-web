@@ -83,8 +83,9 @@ export async function fetchUserPosts(email: string) {
     categories[]->{
       title
     },
+    views,
     "status": select(
-      _id in path("drafts.**") => "Draft",
+      _id in path("drafts.**") => "Under Approval",
       "Published"
     )
   }`;
