@@ -52,9 +52,9 @@ export const Footer = async () => {
             </div>
           </div>
 
-          {/* Column 3: Latest Blogs */}
+          {/* Column 3: Sponsor Links */}
           <div className="border-l border-zinc-800 md:pl-12">
-            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8">Latest Blogs</h4>
+            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-8">Sponsor Links</h4>
             <ul className="space-y-4 text-[11px] font-bold uppercase tracking-widest">
               {latestPosts.map((post: any) => (
                 <li key={post._id}>
