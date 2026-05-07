@@ -95,7 +95,61 @@ const components: PortableTextComponents = {
   },
 };
 
+function decodeHTMLEntities(text: string) {
+  if (!text) return text;
+  const entities: Record<string, string> = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&#x27;': "'",
+    '&#x2F;': '/',
+    '&nbsp;': ' ',
+    '&apos;': "'",
+    '&ndash;': '–',
+    '&mdash;': '—',
+  };
+  return text.replace(/&[a-zA-Z0-9#]+;/g, (match) => {
+    // If it's in our simple map, return it
+    if (entities[match]) return entities[match];
+    
+    // Handle other numeric entities like &#8217;
+    const numericMatch = match.match(/&#(\d+);/);
+    if (numericMatch) {
+      return String.fromCharCode(parseInt(numericMatch[1], 10));
+    }
+    
+    // Hex numeric entities like &#x2019;
+    const hexMatch = match.match(/&#x([0-9a-fA-F]+);/);
+    if (hexMatch) {
+      return String.fromCharCode(parseInt(hexMatch[1], 16));
+    }
+    
+    return match;
+  });
+}
+
+function sanitizeBlocks(blocks: any): any {
+  if (Array.isArray(blocks)) {
+    return blocks.map(sanitizeBlocks);
+  }
+  if (blocks !== null && typeof blocks === 'object') {
+    const sanitized: any = {};
+    for (const key in blocks) {
+      if (key === 'text' && typeof blocks[key] === 'string') {
+        sanitized[key] = decodeHTMLEntities(blocks[key]);
+      } else {
+        sanitized[key] = sanitizeBlocks(blocks[key]);
+      }
+    }
+    return sanitized;
+  }
+  return blocks;
+}
+
 export function PortableBody({ value }: { value: unknown }) {
   if (!value || !Array.isArray(value)) return null;
-  return <PortableText value={value as never} components={components} />;
+  const sanitizedValue = sanitizeBlocks(value);
+  return <PortableText value={sanitizedValue as never} components={components} />;
 }
