@@ -12,8 +12,39 @@ import { fetchSiteSettings } from "@/app/actions/blog";
 
 export const dynamic = 'force-dynamic'
 
-async function getPosts(limit: number) {
-  const query = `*[_type == "post"] | order(publishedAt desc) [0...${limit}] {
+async function getHomePosts(limit: number) {
+  // 1. Fetch site settings to get featured posts
+  const settingsQuery = `*[_id == "siteSettings" || _id == "drafts.siteSettings"] | order(_updatedAt desc)[0] {
+    featuredPosts[]->{
+      _id,
+      title,
+      slug,
+      excerpt,
+      publishedAt,
+      mainImage,
+      author->{
+        name,
+        image
+      },
+      showAsAdmin,
+      categories[]->{
+        title
+      }
+    }
+  }`;
+  
+  const settings = await client.fetch(settingsQuery, {}, { cache: 'no-store' });
+  const featuredPosts = settings?.featuredPosts?.filter(Boolean) || []; // filter nulls in case of broken refs
+  
+  const featuredIds = featuredPosts.map((p: any) => p._id);
+  const featuredIdsString = JSON.stringify(featuredIds);
+  
+  // 2. We need to fill up to 5 spots for the hero section
+  const fallbackNeeded = Math.max(0, 5 - featuredPosts.length);
+  const totalLatestNeeded = fallbackNeeded + limit; // limit is for the "Latest Blogs" section below
+  
+  // 3. Fetch latest posts excluding the featured ones
+  const latestQuery = `*[_type == "post" && !(_id in ${featuredIdsString})] | order(publishedAt desc) [0...${totalLatestNeeded}] {
     _id,
     title,
     slug,
@@ -29,7 +60,16 @@ async function getPosts(limit: number) {
       title
     }
   }`;
-  return await client.fetch(query);
+  
+  const latestPosts = await client.fetch(latestQuery);
+  
+  // Combine to make exactly 5 top posts
+  const top5Posts = [...featuredPosts, ...latestPosts.slice(0, fallbackNeeded)];
+  
+  // The rest go to the remaining section
+  const remainingPosts = latestPosts.slice(fallbackNeeded);
+  
+  return { top5Posts, remainingPosts };
 }
 
 export async function generateMetadata() {
@@ -67,12 +107,12 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  // Fetch 5 for hero + 12 for initial list = 17 posts
-  const posts = await getPosts(17);
+  // We want 12 posts for the initial "Our Latest Blogs" list
+  const { top5Posts, remainingPosts } = await getHomePosts(12);
+  const settings = await fetchSiteSettings();
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  const featuredPost = posts[0];
-  const sidePosts = posts.slice(1, 5);
-  const remainingPosts = posts.slice(5);
+  const featuredPost = top5Posts[0];
+  const sidePosts = top5Posts.slice(1, 5);
 
   return (
     <div className="bg-background min-h-screen">
