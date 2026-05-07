@@ -89,6 +89,6 @@ export async function fetchUserPosts(email: string) {
       "Published"
     )
   }`;
-  const posts = await client.fetch(query, { email });
+  const posts = await writeClient.fetch(query, { email });
   return posts;
 }
