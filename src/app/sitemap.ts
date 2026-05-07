@@ -5,7 +5,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
   // Fetch all dynamic routes from Sanity
-  const query = `*[_type in ["post", "category", "staticPage"]]{
+  const query = `*[_type in ["post", "category", "staticPage"] && defined(slug.current)]{
     "slug": slug.current,
     _type,
     _updatedAt
@@ -30,10 +30,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static routes
   const staticRoutes = [
     '',
-    '/login',
-    '/register',
-    '/write-for-us',
-    '/search',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
