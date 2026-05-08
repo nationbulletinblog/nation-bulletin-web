@@ -29,7 +29,8 @@ async function getHomePosts(limit: number) {
       showAsAdmin,
       categories[]->{
         title
-      }
+      },
+      views
     }
   }`;
   
@@ -58,7 +59,8 @@ async function getHomePosts(limit: number) {
     showAsAdmin,
     categories[]->{
       title
-    }
+    },
+    views
   }`;
   
   const latestPosts = await client.fetch(latestQuery);

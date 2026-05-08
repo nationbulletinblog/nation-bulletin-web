@@ -28,7 +28,8 @@ export async function fetchPosts(offset: number, limit: number, categorySlug?: s
     },
     categories[]->{
       title
-    }
+    },
+    views
   }`;
 
   const posts = await client.fetch(query);

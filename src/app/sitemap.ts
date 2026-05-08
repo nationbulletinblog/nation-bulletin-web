@@ -25,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}${path}`,
       lastModified: item._updatedAt ? new Date(item._updatedAt) : new Date(),
       changeFrequency: item._type === 'post' ? 'daily' : 'weekly',
-      priority: item._type === 'post' ? 0.8 : 0.5,
+      priority: item.slug === 'write-for-us' ? 0.9 : (item._type === 'post' ? 0.8 : 0.5),
     };
   });
 

@@ -37,7 +37,18 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
     const num = Math.abs(hash) % 50000 + 1200;
     return (num / 1000).toFixed(1) + 'k';
   };
-  const viewsToDisplay = post.views || getRandomViews(post._id);
+
+  const formatViews = (views: number | string | undefined | null) => {
+    if (!views) return 0;
+    const numViews = typeof views === 'string' ? parseInt(views, 10) : views;
+    if (isNaN(numViews)) return views;
+    if (numViews >= 1000) {
+      return (numViews / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    }
+    return numViews;
+  };
+
+  const viewsToDisplay = post.views !== undefined && post.views !== null ? formatViews(post.views) : getRandomViews(post._id);
 
   return (
     <article className="group flex flex-col bg-card border border-border hover:border-primary/30 transition-all duration-300">
